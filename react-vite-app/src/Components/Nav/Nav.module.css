@@ -1,0 +1,22 @@
+.nav_wrapper{
+    height: 120px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2% 5%;
+    background-color: rgba(0, 0, 0, 0.2);
+
+}
+
+.nav_wrapper ul li{
+    display: inline-block;
+    margin: 25px 25px;
+    font-weight: 450;
+}
+
+.nav_wrapper .nav_buttons .signup_btn{
+    width: 100px;
+    height: 30px;
+    background-color: blue;
+    
+}
