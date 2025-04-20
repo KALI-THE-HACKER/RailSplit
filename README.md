@@ -2,14 +2,15 @@
 
 ##Railsplit Python
 #Updates:
-- completed appenv/web-scrapping algorithm and created the trains_data dictionary
+
+completed appenv/web-scrapping algorithm and created the trains_data dictionary
 
 
 ##Railsplit - React
 #Updates:
-- Learning...
+Learning...
 
 
 ##Railsplit - FastAPI
 #Updates:
-- Learning...
+Learning...
