@@ -1,14 +1,14 @@
 # RailSplit - Project-O
 
-## Railsplit Python
+## Python
 ### Updates:
 - Completed appenv/web-scraping algorithm.
 - Created the `trains_data` dictionary.
 
-## Railsplit - React
+## React
 ### Updates:
 - Learning...
 
-## Railsplit - FastAPI
+## FastAPI
 ### Updates:
 - Learning...
