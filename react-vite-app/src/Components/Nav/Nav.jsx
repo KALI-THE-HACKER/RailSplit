@@ -11,14 +11,14 @@ function Nav(){
             </div>
             <ul>
                 <li><a href="https://luckylinux.xyz">Home</a></li>
-                <li><a href={FavRoutes}></a>Favourite route</li>
-                <li>Contact us</li>
-                <li>About us</li>
+                <li><a href="https://luckylinux.xyz/favroutes">Favourite route</a></li>
+                <li><a href="https://luckylinux.xyz/contactus">Contact us</a></li>
+                <li><a href="https://luckylinux.xyz/aboutus">About us</a></li>
             </ul>
             
             <div>
-                <button className={navCSS.nav_buttons}>Signup</button>
-                <button className={navCSS.nav_buttons}>Login</button>
+                <button className={navCSS.signup_button}>Signup</button>
+                <button className="px-4 py-2 rounded-[10px]">Login</button>
                 
             </div>
         </div>

@@ -8,15 +8,32 @@
 
 }
 
-.nav_wrapper ul li{
+.nav_wrapper ul li{    
     display: inline-block;
     margin: 25px 25px;
     font-weight: 450;
 }
 
-.nav_wrapper .nav_buttons .signup_btn{
+.nav_wrapper .login_button{
+    border: rgb(0, 94, 255);
+    border-radius: 11px;
     width: 100px;
-    height: 30px;
-    background-color: blue;
-    
+    height: 45px;
+    font-size: 16px;
+    font-weight: 550;
+    background-color: rgb(26, 109, 253);
+}
+
+.nav_wrapper .signup_button{
+    border: transparent;
+    border-radius: 11px;
+    width: 100px;
+    height: 45px;
+    font-size: 16px;
+    font-weight: 550;
+    background-color: transparent;
+}
+
+.nav_wrapper ul li :hover{
+    color: rgba(8, 131, 255, 0.875);
 }
