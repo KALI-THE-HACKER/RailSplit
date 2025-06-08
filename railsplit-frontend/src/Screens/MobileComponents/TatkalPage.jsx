@@ -26,6 +26,28 @@ function TatkalPage(){
     const [confirmation, setConfirmation] = useState(null);
     
 
+    const iAgree = async () => {
+        
+        try{
+            const userDoc = await getDoc(doc(db, "users", auth.currentUser?.uid));
+            if(userDoc.exists()){
+                const isPhoneVerified = await userDoc.data().phone;
+                if(isPhoneVerified){
+                    const tempMessage = "Your phone number " + isPhoneVerified + " is already verified. You can proceed!";
+                    alert(tempMessage);
+                    navigate('/tatkalbooking');
+                    return;
+                }else{
+                    setShowNotice(false);
+                }
+            }else{
+                alert("Error fetching user info from our servers. Try again!")
+            }
+        }catch(err){
+            alert(err.message)
+        }
+    };
+
     // Get user's IP address
     const getUserIP = async () => {
         try {
@@ -112,6 +134,7 @@ function TatkalPage(){
         if (ipCheck.userIP) {
             await setDoc(doc(db, "ipLimits", ipCheck.userIP), {
                 requests: increment(1),
+                phone: "+91"+phone,
                 date: new Date().toDateString(),
                 lastRequest: serverTimestamp()
             }, { merge: true });
@@ -159,7 +182,11 @@ function TatkalPage(){
             alert("Phone verified and linked!");
             navigate('/tatkalbooking');
         } catch (err) {
-            alert(err.message);
+            if (err.code === 'auth/invalid-verification-code') {
+                alert("Incorrect OTP. Please try again.");
+            } else {
+                alert(err.message);
+            }
         } finally {
             setVerifyingOtp(false);
         }
@@ -172,14 +199,14 @@ function TatkalPage(){
         <div className="h-screen w-full bg-black relative flex flex-col items-center py-5 ">
             <div className="flex flex-row items-center w-full">
                 <i onClick={() => navigate('/')} className="fa-solid fa-angle-left text-[#767676] text-2xl" />
-                <div className="absolute left-1/2 -translate-x-1/2 bg-[#1D1F24] h-12 w-[90vw] flex justify-center items-center rounded-4xl"><h2 className="text-white text-2xl font-semibold">{currentUser?.uid ? currentUser?.uid : "NO UID"}</h2></div>    
+                <div className="absolute left-1/2 -translate-x-1/2 bg-[#1D1F24] h-12 w-[90vw] flex justify-center items-center rounded-4xl"><h2 className="text-white text-2xl font-semibold">{"Tatkal Booking"}</h2></div>    
             </div>
 
             { showNotice ?
                 <div className="relative w-90 h-fit py-5 rounded-2xl text-justify bg-[#1D1F24] text-white text-2xl px-5 top-20">
                     <p>We don’t book Tatkal tickets directly. Instead, we coordinate with our trusted agents to handle the booking. To proceed, we need to verify your phone number. Once you submit your request, we’ll reach out to the agent. If booking is available, we’ll contact you for payment. After receiving the payment, we’ll send you the ticket.</p>
 
-                    <button onClick={() => setShowNotice(false)} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 rounded-xl w-full">I agree</button>
+                    <button onClick={iAgree} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 rounded-xl w-full">I agree</button>
                 </div>
             
             

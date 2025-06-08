@@ -32,7 +32,6 @@ function SignupPage() {
 
             const user = emailUserCredential.user;
             
-            localStorage.setItem("emailUser", user);
             await updateProfile(user, { displayName: username });
 
             await setDoc(doc(db, "users", user.uid), {

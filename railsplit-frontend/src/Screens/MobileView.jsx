@@ -40,7 +40,9 @@ function MobileView(){
             <Route path="/searchtrains" element={<ProtectedRoute loggedIn={loggedIn}>
                 <SearchTrainPage />
             </ProtectedRoute>} />
+
             <Route path="/showtrains" element={<ProtectedRoute loggedIn={loggedIn}>
+                
                 <ShowTrainPage />
                 </ProtectedRoute>}/>
             <Route path="/tatkal" element={<ProtectedRoute loggedIn={loggedIn}>

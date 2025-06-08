@@ -130,10 +130,17 @@ function SearchTrainPage(){
                 alert("Origin and destination can't be same!");
                 return;
             }
-            alert("Showing...");
+            // alert("Showing...");
 
             try{
-                navigate('/login');
+                const Data = {
+                    origin: fromJunction,
+                    destination: toJunction,
+                    trainClass: trainClass,
+                    date: departureDate
+                }
+                
+                navigate('/showtrains', {state: {Data}});
             }catch(err){
                 alert(err.message);
             }

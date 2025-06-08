@@ -27,8 +27,6 @@ function LoginPage() {
             const user = emailUserCredential.user;
             const userDoc = await getDoc(doc(db, "users", user.uid));
 
-            localStorage.setItem("emailUser", user);
-
             if(userDoc.exists()){
                 const username = userDoc.data().username;
                 localStorage.setItem("username", username);
