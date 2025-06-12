@@ -185,6 +185,7 @@ def algorithm_one(source, destination):
 #Algorithm to scrap data from internet about travel time,seat availabilty and all
 def web_scrapping(from_station, to_station, date):
     with sync_playwright() as p:
+        temp_trains_data = []
         # Launch the browser
         browser = p.chromium.launch(headless=True)
         
@@ -196,7 +197,7 @@ def web_scrapping(from_station, to_station, date):
 
         try:
             # Navigate to the ixigo trains page
-            page.goto(f"https://www.ixigo.com/search/result/train/{from_station}/{to_station}/{date}//1/0/0/0/ALL")
+            page.goto(f"https://www.ixigo.com/search/result/train/{from_station}/{to_station}/{date}//1/0/0/0/ALL", timeout=40000)
 
             # Wait for the network to be idle
             page.wait_for_load_state("networkidle")
@@ -207,20 +208,21 @@ def web_scrapping(from_station, to_station, date):
             # Extract train information
             train_rows = page.query_selector_all("div.train-listing-row")
             for row in train_rows:
+                temp_train_data = {}
                 # Extract train name and number
                 name_number = row.query_selector("div.name-number")
                 if name_number:
                     train_number = name_number.query_selector("span.train-number").inner_text().strip()
                     train_name = name_number.query_selector("span.train-name").inner_text().strip()
 
-                    seat_availability = row.query_selector_all("div.train-class-item")
+                    seat_availability_row = row.query_selector_all("div.train-class-item")
 
-                    data =[]
-                    for i in seat_availability:
+                    seat_availability_data ={}
+                    for i in seat_availability_row:
                         class_name = i.query_selector('.train-class').inner_text().strip()
                         availability = i.query_selector('.avail-class').inner_text().strip()
                         if class_name and availability:
-                            data.append((class_name, availability))
+                            seat_availability_data[class_name] = availability
                     
                     # exit()
 
@@ -244,10 +246,18 @@ def web_scrapping(from_station, to_station, date):
                             return "error in finding train details!"
 
                     # available_trains[train_number] = (train_name, from_st, to_st, departure, arrival, duration)
+                    temp_train_data.update({"train_number": train_number,"train_name": train_name, "from_station": from_st,"to_station": to_st, "seat_availabilty": seat_availability_data, "departure": departure, "arrival": arrival, "duration": duration})
+
+                    temp_trains_data.append(temp_train_data)
+
+
             
             # print(available_trains)
-            print(data)
-            return (train_name, from_st, to_st, departure, arrival, duration)
+            for i in list(seat_availability_data.values()):
+                if "AVL" in i:
+                    return temp_trains_data
+            else:
+                return None
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -259,12 +269,12 @@ def web_scrapping(from_station, to_station, date):
 
 # source = input() #Source_Station_code
 # destination = input() #Destination_Station_code
-date = "08072025"  #DDMMYYYY Format
+date = "08082025"  #DDMMYYYY Format
 # source.capitalize()
 # destination.capitalize()
 
-source = "MAJN"
-destination = "NDLS"
+source = "JP"
+destination = "BCT"
 
 start_time = time.localtime()
 
@@ -273,15 +283,21 @@ coordinates = st_code_to_cartesian(source, destination)
 intermediates = algorithm_one(source, destination)
 
 for i in intermediates:
+    print("Searching trains for : ", i)
     leg1_trains = web_scrapping(source, i, date)
     leg2_trains = web_scrapping(i, destination, date)
+    print(leg1_trains, leg2_trains)
+    if leg1_trains and leg2_trains:
+        available_trains.append({
+            "intermediates": i,
+            "leg1": leg1_trains,
+            "leg2": leg2_trains
+        })
+    else:
+        print("Seat not found for intermediate", i)
 
-    available_trains.append({
-        "intermediates": i,
-        "leg1": leg1_trains,
-        "leg2": leg2_trains
-    })
-
+    end_time = time.localtime()
+    print(f"Time taken : {(end_time.tm_min*60 + end_time.tm_sec)-(start_time.tm_min*60 + start_time.tm_sec)}")
     print(available_trains)
 
 print(web_scrapping(source, destination, date))
