@@ -107,7 +107,7 @@ top100_cartesian = {
 
 coordinates = []
 intermediates = []
-available_trains = {} #{train_number : (train_name, from_st, to_st, (depart_time, day, date, month), (arrive_time, day, date, month), duration)}
+available_trains = [] #{train_number : (train_name, from_st, to_st, (depart_time, day, date, month), (arrive_time, day, date, month), duration)}
 
 #Algorithm to find the cartesian coordinates of source and destination
 def st_code_to_cartesian(source, destination):
@@ -149,6 +149,8 @@ def st_code_to_cartesian(source, destination):
     else:
         return f"{{error}}: OpenstreetmapAPI Dest_response_code : {dest_response.status_code}"
     
+    return coordinates
+    
 
 #Algorithm_one for finding intermediate junctions (using ellipse)
 def algorithm_one(source, destination):
@@ -178,7 +180,7 @@ def algorithm_one(source, destination):
         if destination in intermediates:
             intermediates.remove(destination)
 
-        print(intermediates)
+        return intermediates
 
 #Algorithm to scrap data from internet about travel time,seat availabilty and all
 def web_scrapping(from_station, to_station, date):
@@ -211,9 +213,17 @@ def web_scrapping(from_station, to_station, date):
                     train_number = name_number.query_selector("span.train-number").inner_text().strip()
                     train_name = name_number.query_selector("span.train-name").inner_text().strip()
 
-                    seat_availability = row.query_selector("div.train-class-wrapper")
-                    print(seat_availability.inner_text().strip())
-                    exit()
+                    seat_availability = row.query_selector_all("div.train-class-item")
+
+                    data =[]
+                    for i in seat_availability:
+                        class_name = i.query_selector('.train-class').inner_text().strip()
+                        availability = i.query_selector('.avail-class').inner_text().strip()
+                        if class_name and availability:
+                            data.append((class_name, availability))
+                    
+                    # exit()
+
                     train_details = row.query_selector("div.orgn-dstn")
                     if train_details:
                         details = train_details.inner_text().strip()
@@ -233,8 +243,11 @@ def web_scrapping(from_station, to_station, date):
                         else:
                             return "error in finding train details!"
 
-                    available_trains[train_number] = (train_name, from_st, to_st, departure, arrival, duration)
-            print(available_trains)
+                    # available_trains[train_number] = (train_name, from_st, to_st, departure, arrival, duration)
+            
+            # print(available_trains)
+            print(data)
+            return (train_name, from_st, to_st, departure, arrival, duration)
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -246,7 +259,7 @@ def web_scrapping(from_station, to_station, date):
 
 # source = input() #Source_Station_code
 # destination = input() #Destination_Station_code
-date = "26042025"  #DDMMYYYY Format
+date = "08072025"  #DDMMYYYY Format
 # source.capitalize()
 # destination.capitalize()
 
@@ -254,8 +267,23 @@ source = "MAJN"
 destination = "NDLS"
 
 start_time = time.localtime()
-print(st_code_to_cartesian(source, destination))
-print(algorithm_one(source, destination))
+
+coordinates = st_code_to_cartesian(source, destination)
+
+intermediates = algorithm_one(source, destination)
+
+for i in intermediates:
+    leg1_trains = web_scrapping(source, i, date)
+    leg2_trains = web_scrapping(i, destination, date)
+
+    available_trains.append({
+        "intermediates": i,
+        "leg1": leg1_trains,
+        "leg2": leg2_trains
+    })
+
+    print(available_trains)
+
 print(web_scrapping(source, destination, date))
 
 end_time = time.localtime()
