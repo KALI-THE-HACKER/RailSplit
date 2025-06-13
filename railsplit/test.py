@@ -204,18 +204,26 @@ top100_cartesian1 = {
     'UMB': (1944205, 4913709)
     }
 
-import http.client
+# import http.client
 
-conn = http.client.HTTPSConnection("irctc1.p.rapidapi.com")
+# conn = http.client.HTTPSConnection("irctc1.p.rapidapi.com")
 
-headers = {
-    'x-rapidapi-key': "529a7286e7msh1e7ac24376006bap1bccf0jsne0afea5f021a",
-    'x-rapidapi-host': "irctc1.p.rapidapi.com"
-}
+# headers = {
+#     'x-rapidapi-key': "529a7286e7msh1e7ac24376006bap1bccf0jsne0afea5f021a",
+#     'x-rapidapi-host': "irctc1.p.rapidapi.com"
+# }
 
-conn.request("GET", "/api/v3/trainBetweenStations?fromStationCode=JP&toStationCode=NDLS&dateOfJourney=2025-07-17", headers=headers)
+# conn.request("GET", "/api/v3/trainBetweenStations?fromStationCode=JP&toStationCode=NDLS&dateOfJourney=2025-07-17", headers=headers)
 
-res = conn.getresponse()
-data = res.read()
+# res = conn.getresponse()
+# data = res.read()
 
-print(data.decode("utf-8"))
+# print(data.decode("utf-8"))
+
+a = [1,2, 3, 4, 5, 6]
+
+for i in a[:]:
+    if i%2!=0 or i==4:
+        a.remove(i)
+    print(a)
+print(a)

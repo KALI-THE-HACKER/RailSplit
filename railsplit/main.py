@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime, timedelta
 import time
 from playwright.sync_api import sync_playwright
 
@@ -283,16 +284,26 @@ coordinates = st_code_to_cartesian(source, destination)
 intermediates = algorithm_one(source, destination)
 
 for i in intermediates:
-    print("Searching trains for : ", i)
     leg1_trains = web_scrapping(source, i, date)
     leg2_trains = web_scrapping(i, destination, date)
-    print(leg1_trains, leg2_trains)
+
+    year = "2025" #Fetch year form user input
     if leg1_trains and leg2_trains:
-        available_trains.append({
-            "intermediates": i,
-            "leg1": leg1_trains,
-            "leg2": leg2_trains
-        })
+        leg1_very_arrival = datetime.strptime(f"{leg1_trains[0]['arrival'][2]} {leg1_trains[0]['arrival'][3]} {year} {leg1_trains[0]['arrival'][0]}", "%d %b %Y %H:%M")
+
+        for each_train in leg2_trains[:]:
+
+            leg2_very_departure = datetime.strptime(f"{each_train['departure'][2]} {each_train['departure'][3]} {year} {each_train['departure'][0]}", "%d %b %Y %H:%M")
+
+            if (leg2_very_departure > leg1_very_arrival + timedelta(minutes=15)):
+                leg2_trains.remove(each_train)
+
+        if leg1_trains and leg2_trains:
+            available_trains.append({
+                "intermediates": i,
+                "leg1": leg1_trains,
+                "leg2": leg2_trains
+            })
     else:
         print("Seat not found for intermediate", i)
 
