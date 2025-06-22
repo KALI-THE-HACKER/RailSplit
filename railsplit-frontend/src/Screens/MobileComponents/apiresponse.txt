@@ -1,0 +1,729 @@
+[
+    {
+        "Direct-trains": [
+            {
+                "train_number": "12431",
+                "train_name": "RAJDHANI EXP",
+                "from_station": "MAJN",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3A": "AVL 194",
+                    "2A": "AVL 14",
+                    "1A": "AVL 29"
+                },
+                "departure": [
+                    "01:50",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "12:30",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "34hr 40min"
+            },
+            {
+                "train_number": "22653",
+                "train_name": "TVC NZM SF EXP",
+                "from_station": "MAJN",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3E": "AVL 121",
+                    "2A": "AVL 24",
+                    "SL": "RAC 7",
+                    "3A": "WL2"
+                },
+                "departure": [
+                    "09:30",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "22:40",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "37hr 10min"
+            },
+            {
+                "train_number": "12217",
+                "train_name": "SAMPARK KRANTHI",
+                "from_station": "MAJN",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "1A": "AVL",
+                    "SL": "RAC 61",
+                    "3E": "RAC 5",
+                    "2A": "RAC 4",
+                    "3A": "Regret"
+                },
+                "departure": [
+                    "17:10",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "06:10",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "37hr"
+            },
+            {
+                "train_number": "12617",
+                "train_name": "MANGLADWEEP EXP",
+                "from_station": "MAJN",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "SL": "AVL 5",
+                    "3E": "AVL 44",
+                    "3A": "AVL 25",
+                    "2A": "AVL 8"
+                },
+                "departure": [
+                    "19:00",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "13:35",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "42hr 35min"
+            }
+        ]
+    },
+    {
+        "intermediates": "CSTM",
+        "leg1": [
+            {
+                "train_number": "12431",
+                "train_name": "RAJDHANI EXP",
+                "from_station": "MAJN",
+                "to_station": "BSR",
+                "seat_availabilty": {
+                    "3A": "AVL 20",
+                    "2A": "AVL 20",
+                    "1A": "AVL 29"
+                },
+                "departure": [
+                    "01:50",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "19:35",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "duration": "17hr 45min"
+            },
+            {
+                "train_number": "16338",
+                "train_name": "ERS OKHA EXP",
+                "from_station": "MAJN",
+                "to_station": "BSR",
+                "seat_availabilty": {
+                    "SL": "WL10",
+                    "3A": "WL2",
+                    "2A": "WL1"
+                },
+                "departure": [
+                    "04:10",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "23:05",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "duration": "18hr 55min"
+            },
+            {
+                "train_number": "22653",
+                "train_name": "TVC NZM SF EXP",
+                "from_station": "MAJN",
+                "to_station": "BSR",
+                "seat_availabilty": {
+                    "SL": "AVL 7",
+                    "3E": "AVL 4",
+                    "3A": "AVL",
+                    "2A": "AVL 1"
+                },
+                "departure": [
+                    "09:30",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "04:40",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "19hr 10min"
+            },
+            {
+                "train_number": "12620",
+                "train_name": "MATSYAGANDA EXP",
+                "from_station": "MAQ",
+                "to_station": "LTT",
+                "seat_availabilty": {
+                    "SL": "AVL 167",
+                    "3E": "AVL 67",
+                    "3A": "AVL 68",
+                    "2A": "AVL 39"
+                },
+                "departure": [
+                    "12:45",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "06:35",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "17hr 50min"
+            },
+            {
+                "train_number": "12134",
+                "train_name": "MAJN CSMT SF EXP",
+                "from_station": "MAJN",
+                "to_station": "CSMT",
+                "seat_availabilty": {
+                    "SL": "AVL 121",
+                    "3A": "AVL 53",
+                    "2A": "AVL 26"
+                },
+                "departure": [
+                    "16:35",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "10:32",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "17hr 57min"
+            },
+            {
+                "train_number": "12217",
+                "train_name": "SAMPARK KRANTHI",
+                "from_station": "MAJN",
+                "to_station": "BSR",
+                "seat_availabilty": {
+                    "SL": "AVL 17",
+                    "2A": "AVL 2",
+                    "1A": "AVL",
+                    "3E": "RAC 5",
+                    "3A": "Regret"
+                },
+                "departure": [
+                    "17:10",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "12:35",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "19hr 25min"
+            },
+            {
+                "train_number": "12617",
+                "train_name": "MANGLADWEEP EXP",
+                "from_station": "MAJN",
+                "to_station": "KYN",
+                "seat_availabilty": {
+                    "SL": "AVL 28",
+                    "3E": "AVL 44",
+                    "3A": "AVL 25",
+                    "2A": "AVL 8"
+                },
+                "departure": [
+                    "19:00",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "13:27",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "18hr 27min"
+            },
+            {
+                "train_number": "22476",
+                "train_name": "CBE HSR AC EXP",
+                "from_station": "MAJN",
+                "to_station": "BSR",
+                "seat_availabilty": {
+                    "3A": "AVL 1",
+                    "2A": "AVL 4",
+                    "1A": "AVL 8"
+                },
+                "departure": [
+                    "20:00",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "15:00",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "19hr"
+            },
+            {
+                "train_number": "16346",
+                "train_name": "NETHRAVATHI EXP",
+                "from_station": "MAJN",
+                "to_station": "LTT",
+                "seat_availabilty": {
+                    "3E": "AVL 2",
+                    "3A": "AVL 5",
+                    "2A": "AVL 1",
+                    "SL": "RAC 19"
+                },
+                "departure": [
+                    "21:35",
+                    "Sat,",
+                    "19",
+                    "Jul"
+                ],
+                "arrival": [
+                    "17:05",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "19hr 30min"
+            }
+        ],
+        "leg2": [
+            {
+                "train_number": "19019",
+                "train_name": "BDTS HW EXP",
+                "from_station": "BDTS",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "SL": "AVL 19",
+                    "3E": "AVL 3",
+                    "3A": "AVL 8",
+                    "2A": "AVL 2",
+                    "1A": "AVL 8"
+                },
+                "departure": [
+                    "00:20",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "02:35",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "26hr 15min"
+            },
+            {
+                "train_number": "22653",
+                "train_name": "TVC NZM SF EXP",
+                "from_station": "PNVL",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3E": "AVL 121",
+                    "3A": "AVL 76",
+                    "2A": "AVL 1",
+                    "SL": "RAC 7"
+                },
+                "departure": [
+                    "02:40",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "22:40",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "duration": "20hr"
+            },
+            {
+                "train_number": "12217",
+                "train_name": "SAMPARK KRANTHI",
+                "from_station": "PNVL",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "1A": "AVL",
+                    "SL": "RAC 61",
+                    "3E": "RAC 5",
+                    "2A": "RAC 4",
+                    "3A": "WL8"
+                },
+                "departure": [
+                    "10:35",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "06:10",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "19hr 35min"
+            },
+            {
+                "train_number": "12471",
+                "train_name": "SWARAJ EXPRESS",
+                "from_station": "BDTS",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "3E": "AVL 3",
+                    "1A": "AVL 1",
+                    "SL": "Regret",
+                    "3A": "Regret",
+                    "2A": "Regret"
+                },
+                "departure": [
+                    "11:00",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "05:25",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "18hr 25min"
+            },
+            {
+                "train_number": "12925",
+                "train_name": "PASCHIM EXPRESS",
+                "from_station": "BDTS",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "SL": "WL1",
+                    "3A": "Tap to refresh",
+                    "2A": "Tap to refresh",
+                    "1A": "Tap to refresh"
+                },
+                "departure": [
+                    "11:30",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "10:40",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "23hr 10min"
+            },
+            {
+                "train_number": "12216",
+                "train_name": "DEE GARIBRATH",
+                "from_station": "BDTS",
+                "to_station": "DEE",
+                "seat_availabilty": {
+                    "3A": "AVL 374"
+                },
+                "departure": [
+                    "12:00",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "11:00",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "23hr"
+            },
+            {
+                "train_number": "12617",
+                "train_name": "MANGLADWEEP EXP",
+                "from_station": "PNVL",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3E": "AVL 2",
+                    "3A": "AVL 25",
+                    "2A": "AVL",
+                    "SL": "WL6"
+                },
+                "departure": [
+                    "12:30",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "13:35",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "25hr 5min"
+            },
+            {
+                "train_number": "12493",
+                "train_name": "DARSHAN EXPRESS",
+                "from_station": "KYN",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "1A": "AVL 4",
+                    "3A": "RAC 8",
+                    "SL": "WL9",
+                    "2A": "WL2"
+                },
+                "departure": [
+                    "13:25",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "07:00",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "17hr 35min"
+            },
+            {
+                "train_number": "22221",
+                "train_name": "NZM RAJDHANI",
+                "from_station": "CSMT",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3A": "AVL 282",
+                    "2A": "AVL 71",
+                    "1A": "AVL 2"
+                },
+                "departure": [
+                    "16:00",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "09:55",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "17hr 55min"
+            },
+            {
+                "train_number": "12951",
+                "train_name": "NDLS TEJAS RAJ",
+                "from_station": "MMCT",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "3A": "AVL 97",
+                    "2A": "AVL 50",
+                    "1A": "WL2"
+                },
+                "departure": [
+                    "17:00",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "08:32",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "15hr 32min"
+            },
+            {
+                "train_number": "12953",
+                "train_name": "AK TEJAS RAJ EX",
+                "from_station": "MMCT",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3A": "AVL 201",
+                    "2A": "AVL 48",
+                    "1A": "AVL 2"
+                },
+                "departure": [
+                    "17:10",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "09:43",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "16hr 33min"
+            },
+            {
+                "train_number": "12907",
+                "train_name": "BDTS SMPRK K EX",
+                "from_station": "BDTS",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "SL": "AVL 45",
+                    "3E": "AVL 61",
+                    "3A": "AVL 45",
+                    "2A": "AVL 6",
+                    "1A": "AVL 10"
+                },
+                "departure": [
+                    "17:30",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "10:15",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "16hr 45min"
+            },
+            {
+                "train_number": "22413",
+                "train_name": "MAO NZM RAJDHANI",
+                "from_station": "PNVL",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3A": "AVL 39",
+                    "2A": "AVL 17",
+                    "1A": "AVL 4"
+                },
+                "departure": [
+                    "17:55",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "12:30",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "18hr 35min"
+            },
+            {
+                "train_number": "12903",
+                "train_name": "GOLDEN TEMPLE",
+                "from_station": "MMCT",
+                "to_station": "NZM",
+                "seat_availabilty": {
+                    "3A": "AVL 1",
+                    "2A": "AVL",
+                    "1A": "AVL 2",
+                    "SL": "Regret"
+                },
+                "departure": [
+                    "18:45",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "13:50",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "19hr 5min"
+            },
+            {
+                "train_number": "12137",
+                "train_name": "PUNJAB MAIL",
+                "from_station": "CSMT",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "SL": "AVL 25",
+                    "3A": "AVL 58",
+                    "2A": "AVL 13",
+                    "1A": "AVL 2"
+                },
+                "departure": [
+                    "19:35",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "21:25",
+                    "Mon,",
+                    "21",
+                    "Jul"
+                ],
+                "duration": "25hr 50min"
+            },
+            {
+                "train_number": "11057",
+                "train_name": "CSMT ASR EXPRESS",
+                "from_station": "CSMT",
+                "to_station": "NDLS",
+                "seat_availabilty": {
+                    "SL": "AVL 6",
+                    "3E": "AVL 129",
+                    "2A": "Tap to refresh"
+                },
+                "departure": [
+                    "23:30",
+                    "Sun,",
+                    "20",
+                    "Jul"
+                ],
+                "arrival": [
+                    "03:30",
+                    "Tue,",
+                    "22",
+                    "Jul"
+                ],
+                "duration": "28hr"
+            }
+        ]

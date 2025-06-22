@@ -16,9 +16,29 @@ h2 {
     font-family: 'Nunito Sans', sans-serif;
 }
 
+.is-android .android-text-20 {
+  font-size: 20px !important; /* or 2px less than your default */
+}
+
+.is-android .android-text-12 {
+  font-size: 12px !important; /* or 2px less than your default */
+}
+
+.rounded-box {
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.rounded-btn {
+  border-radius: 25px;  /* high value for smoother curves */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+
 .react-datepicker__input-container input::placeholder {
   color: #a0a0a0; /* your desired color */
 }
+
 
 
 /* Datepicker styling */
@@ -77,4 +97,9 @@ h2 {
 
 .react-datepicker__input-container input {
   caret-color: transparent !important;
+}
+
+html, body {
+  background-color: #000 !important;
+  color-scheme: dark;
 }

@@ -158,7 +158,7 @@ function SearchTrainPage(){
                 setClassDropdown(false);
             }
         }
-        } className="h-screen w-full bg-black relative flex flex-col items-center py-5 ">
+        } className="h-screen w-full bg-black relative flex flex-col items-center py-5">
             <div className="flex flex-row items-center w-full">
                 <i onClick={() => navigate('/')} className="fa-solid fa-angle-left text-[#767676] text-2xl" />
                 <div className="absolute left-1/2 -translate-x-1/2 bg-[#1D1F24] h-12 w-[90vw] flex justify-center items-center rounded-4xl"><h2 className="text-white text-2xl font-semibold">Search trains</h2></div>    
@@ -300,7 +300,7 @@ function SearchTrainPage(){
                     </div>
 
                 </div>
-                <button onClick={searchTrainsButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-xl">Search trains</button>
+                <button onClick={searchTrainsButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-2xl">Search trains</button>
             </div>
 
         </div>
