@@ -53,12 +53,13 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
             try:
                 # Check if the result is already cached
                 cached_result = r.get(f"{source}-{destination}-{date}")
-                cached_intermediates = r.get(f"{source}-{destination}-{date}-fetchedIntermediates")
+                cached_fetchedIntermediates = r.get(f"{source}-{destination}-{date}-fetchedIntermediates")
 
                 #If cached result found, load them
                 if cached_result:
                     yield f"data: {json.dumps({'status': 'Cached data found!'})}\n\n"
                     available_trains = json.loads(cached_result)
+                    logging.info("Cached result found!")
 
                 #If cached result not found, find direct trains
                 else:
@@ -75,12 +76,15 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
                     else:
                         yield f"data: {json.dumps({'status': 'no_direct_trains_found'})}\n\n"
 
-                #If cached intermediated found, load them
-                if cached_intermediates:
+                #If cached fetchedIntermediates found, load them
+                if cached_fetchedIntermediates:
                     yield f"data: {json.dumps({'status': 'Cached fetchedIntermediates found!'})}\n\n"
-                    fetchedIntermediates = json.loads(cached_intermediates)
+                    fetchedIntermediates = json.loads(cached_fetchedIntermediates)
+                    logging.info("Cached fetchedIntermediates found!")
 
+                #If cached fetchedIntermediates not found, initialize empty list    
                 else:
+                    fetchedIntermediates = []
 
                 # Send status update
                 yield f"data: {json.dumps({'status': 'finding_intermediate_stations'})}\n\n"
@@ -88,6 +92,9 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
                 coordinates = st_code_to_cartesian(source, destination)
                 intermediates = algorithm_one(source, destination, coordinates)
                 logging.info(f"Intermediates: {intermediates}")
+
+                intermediates = list(set(intermediates) - set(fetchedIntermediates)) 
+
 
                 if not intermediates:
                     yield f"data: {json.dumps({'status': 'no_intermediates_found'})}\n\n"
