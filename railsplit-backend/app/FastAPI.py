@@ -14,10 +14,29 @@ coordinates = []
 intermediates = []
 
 logging.basicConfig(
-    filename='../logs/logfile.log',
+    filename='logfile.log',  # change name as needed
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
+
+def time_difference_calculator(time1, time2, layover=0):
+    #time1 is more than time2
+    diff = time1 - time2 - timedelta(minutes=layover)
+    minutes = diff.total_seconds() / 60
+
+    return minutes
+
+    # if (minutes//60) == 0:
+    #     return minutes
+    # else:
+    #     if minutes//60 < 2:
+    #         result = f"{minutes//60}hour {minutes%60}minutes"
+    #     else:
+    #         result = f"{minutes//60}hours {minutes%60}minutes"
+
+    #     return result
+
+
 
 
 @app.post("/railsplit-server")
@@ -39,6 +58,7 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
         source, destination, date = data.get("origin"), data.get("destination"), data.get("date")
 
         logging.info(f"IP : {ip} \n       -Source: {source}\n       -Destination: {destination}\n       -Date: {date}")
+
 
         async def main(source, destination, date):
             available_trains = [] #{train_number : (train_name, from_st, to_st, (depart_time, day, date, month), (arrive_time, day, date, month), duration)}
@@ -106,10 +126,12 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
 
                 for idx, i in enumerate(intermediates):
                     try:
+                        logging.info(f"Processing intermediate station: {i}")
                         # Send progress update
                         yield f"data: {json.dumps({'status': f'checking_intermediate_{idx+1}_of_{len(intermediates)}', 'station': i})}\n\n"
                         
                         leg1_trains = await web_scrapping(source, i, date) or []
+                        logging.info(f"Fetched leg1 trains for {source} -> {i}: {len(leg1_trains)} found")
                         
                         if not leg1_trains:
                             logging.info(f"No leg1 trains found for intermediate: {i}")
@@ -119,44 +141,57 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
                         leg2_day2_trains = await web_scrapping(i, destination, (datetime.strptime(date, "%d%m%Y")+timedelta(days=1)).strftime("%d%m%Y")) or []
 
                         leg2_trains = leg2_day1_trains + leg2_day2_trains
+                        logging.info(f"Fetched leg2 trains for {i} -> {destination}: {len(leg2_trains)} found")
 
                         if not leg2_trains:
                             logging.info(f"No leg2 trains found for intermediate: {i}")
                             continue
 
-                        year = "2025" #Fetch year from user input
-                        
-                        # Filter leg2 trains based on arrival time of leg1
-                        if leg1_trains and leg2_trains:
-                            leg1_very_arrival = datetime.strptime(f"{leg1_trains[0]['arrival'][2]} {leg1_trains[0]['arrival'][3]} {year} {leg1_trains[0]['arrival'][0]}", "%d %b %Y %H:%M")
+                        year = date[4:] #Fetch year from user input
 
-                            for each_train in leg2_trains[:]:
-                                leg2_very_departure = datetime.strptime(f"{each_train['departure'][2]} {each_train['departure'][3]} {year} {each_train['departure'][0]}", "%d %b %Y %H:%M")
+                        # Filteration and coupling of leg1 & leg2 trains
+                        for train1 in leg1_trains[:]:
+                            train1_departure = datetime.strptime(f"{train1['departure'][2]} {train1['departure'][3]} {year} {train1['departure'][0]}", "%d %b %Y %H:%M")
+                            train1_arrival = datetime.strptime(f"{train1['arrival'][2]} {train1['arrival'][3]} {year} {train1['arrival'][0]}", "%d %b %Y %H:%M")
 
-                                if (leg2_very_departure < leg1_very_arrival + timedelta(minutes=15)):
-                                    leg2_trains.remove(each_train)
+                            for train2 in leg2_trains[:]:
+                                train2_departure = datetime.strptime(f"{train2['departure'][2]} {train2['departure'][3]} {year} {train2['departure'][0]}", "%d %b %Y %H:%M")
+                                train2_arrival = datetime.strptime(f"{train2['arrival'][2]} {train2['arrival'][3]} {year} {train2['arrival'][0]}", "%d %b %Y %H:%M")
 
-                            if leg1_trains and leg2_trains:
-                                intermediate_result = {
-                                    "intermediate": i,
-                                    "leg1": leg1_trains,
-                                    "leg2": leg2_trains
-                                }
-                                available_trains.append(intermediate_result)
+                                #Filter trains with departure more than arrival of train1 + 15min
+                                if(train2_departure > train1_arrival + timedelta(minutes=15)):
+                                    layover = time_difference_calculator(train2_departure, train1_arrival)
+                                    duration = time_difference_calculator(train2_arrival, train1_departure, layover)
+                                    logging.info(f"Valid connection found: {train1['from_station']}->{i}->{train2['to_station']}, layover: {layover} min, duration: {duration} min")
+                                    intermediate_result = {
+                                        "intermediate": i,
+                                        "origin": train1['from_station'],
+                                        "destination": train2['to_station'],
+                                        "train1_departure": train1_departure.strftime("%d %B, %Y"),
+                                        "train1_arrival": train1_arrival.strftime("%d %B, %Y"),
+                                        "train2_departure": train2_departure.strftime("%d %B, %Y"),
+                                        "train2_arrival": train2_arrival.strftime("%d %B, %Y"),
+                                        "layover": layover,
+                                        "duration": duration
+                                    }
+                                    #Upadate available_trains list
+                                    available_trains.append(intermediate_result)
+                                    logging.info(f"Appended intermediate_result for {i} to available_trains. Total now: {len(available_trains)}")
 
-                                # Cache the result
-                                r.set(f"{source}-{destination}-{date}", json.dumps(available_trains))
+                                else:
+                                    logging.info(f"No valid connecting trains for intermediate: {i} after time filtering")
 
-                                # Send the updated results
-                                yield f"data: {json.dumps(available_trains)}\n\n"
-                            else:
-                                logging.info(f"No valid connecting trains for intermediate: {i} after time filtering")
-                        else:
-                            logging.info(f"Missing trains for intermediate: {i}, Origin: {source}, destination: {destination}, date: {date}")
+                        # Send the updated results
+                        logging.info(f"Yielding updated available_trains, total: {len(available_trains)}")
+                        yield f"data: {json.dumps(available_trains)}\n\n"
 
                         fetchedIntermediates.append(i)
                         logging.info(f"Processed intermediate {i} successfully")
+                        
+                        # Cache the result
+                        r.set(f"{source}-{destination}-{date}", json.dumps(available_trains))
                         r.set(f"{source}-{destination}-{date}-fetchedIntermediates", json.dumps(fetchedIntermediates))
+                        logging.info(f"Cached results for {source}-{destination}-{date}")
 
                     except Exception as e:
                         logging.error(f"Error processing intermediate {i}: {str(e)}")
