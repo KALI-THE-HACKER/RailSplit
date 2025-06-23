@@ -1,7 +1,8 @@
 import requests
 from datetime import datetime, timedelta
 import time
-from playwright.sync_api import sync_playwright
+import asyncio
+from playwright.async_api import async_playwright
 
 #Global dictionaries, lists and all
 top100_cartesian = {
@@ -108,7 +109,7 @@ top100_cartesian = {
 
 coordinates = []
 intermediates = []
-available_trains = [] #{train_number : (train_name, from_st, to_st, (depart_time, day, date, month), (arrive_time, day, date, month), duration)}
+# available_trains = [] #{train_number : (train_name, from_st, to_st, (depart_time, day, date, month), (arrive_time, day, date, month), duration)}
 
 #Algorithm to find the cartesian coordinates of source and destination
 def st_code_to_cartesian(source, destination):
@@ -154,7 +155,7 @@ def st_code_to_cartesian(source, destination):
     
 
 #Algorithm_one for finding intermediate junctions (using ellipse)
-def algorithm_one(source, destination):
+def algorithm_one(source, destination, coordinates):
         
         x1 = coordinates[0][0]
         y1 = coordinates[0][1]
@@ -184,52 +185,60 @@ def algorithm_one(source, destination):
         return intermediates
 
 #Algorithm to scrap data from internet about travel time,seat availabilty and all
-def web_scrapping(from_station, to_station, date):
-    with sync_playwright() as p:
+async def web_scrapping(from_station, to_station, date):
+    async with async_playwright() as p:
         temp_trains_data = []
         # Launch the browser
-        browser = p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(headless=True)
         
         # Create a new context with a custom user agent
-        context = browser.new_context(
+        context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         )
-        page = context.new_page()
+        page = await context.new_page()
 
         try:
             # Navigate to the ixigo trains page
-            page.goto(f"https://www.ixigo.com/search/result/train/{from_station}/{to_station}/{date}//1/0/0/0/ALL", timeout=40000)
+            await page.goto(f"https://www.ixigo.com/search/result/train/{from_station}/{to_station}/{date}//1/0/0/0/ALL", timeout=40000)
 
             # Wait for the network to be idle
-            page.wait_for_load_state("networkidle")
+            await page.wait_for_load_state("networkidle")
 
             # Wait for the train listing rows to load
-            page.wait_for_selector("div.train-listing-row", timeout=50000)
+            await page.wait_for_selector("div.train-listing-row", timeout=50000)
 
             # Extract train information
-            train_rows = page.query_selector_all("div.train-listing-row")
+            train_rows = await page.query_selector_all("div.train-listing-row")
             for row in train_rows:
                 temp_train_data = {}
-                # Extract train name and number
-                name_number = row.query_selector("div.name-number")
-                if name_number:
-                    train_number = name_number.query_selector("span.train-number").inner_text().strip()
-                    train_name = name_number.query_selector("span.train-name").inner_text().strip()
 
-                    seat_availability_row = row.query_selector_all("div.train-class-item")
+                # Extract train name and number
+                name_number = await row.query_selector("div.name-number")
+                if name_number:
+                    train_number_el = await name_number.query_selector("span.train-number")
+                    train_number = (await train_number_el.inner_text()).strip() if train_number_el else ""
+
+                    train_name_el = await name_number.query_selector("span.train-name")
+                    train_name = (await train_name_el.inner_text()).strip() if train_name_el else ""
+
+
+                    seat_availability_row = await row.query_selector_all("div.train-class-item")
 
                     seat_availability_data ={}
                     for i in seat_availability_row:
-                        class_name = i.query_selector('.train-class').inner_text().strip()
-                        availability = i.query_selector('.avail-class').inner_text().strip()
+                        class_name_el = await i.query_selector('.train-class')
+                        class_name = (await class_name_el.inner_text()).strip() if class_name_el else ""
+
+                        availability_el = await i.query_selector('.avail-class')
+                        availability = (await availability_el.inner_text()).strip() if availability_el else ""
+
                         if class_name and availability:
                             seat_availability_data[class_name] = availability
-                    
-                    # exit()
 
-                    train_details = row.query_selector("div.orgn-dstn")
+                    train_details = await row.query_selector("div.orgn-dstn")
                     if train_details:
-                        details = train_details.inner_text().strip()
+                        # details = await train_details.inner_text().strip()
+                        details = (await train_details.inner_text()).strip() if train_details else ""
                         
                         details = details.split()
                         from_st = details[0]
@@ -253,7 +262,6 @@ def web_scrapping(from_station, to_station, date):
 
 
             
-            # print(available_trains)
             for i in list(seat_availability_data.values()):
                 if "AVL" in i:
                     return temp_trains_data
@@ -265,53 +273,5 @@ def web_scrapping(from_station, to_station, date):
 
         finally:
             # Close the browser
-            browser.close()
+            await browser.close()
 
-
-# source = input() #Source_Station_code
-# destination = input() #Destination_Station_code
-date = "08082025"  #DDMMYYYY Format
-# source.capitalize()
-# destination.capitalize()
-
-source = "JP"
-destination = "BCT"
-
-start_time = time.localtime()
-
-coordinates = st_code_to_cartesian(source, destination)
-
-intermediates = algorithm_one(source, destination)
-
-for i in intermediates:
-    leg1_trains = web_scrapping(source, i, date)
-    leg2_trains = web_scrapping(i, destination, date)
-
-    year = "2025" #Fetch year form user input
-    if leg1_trains and leg2_trains:
-        leg1_very_arrival = datetime.strptime(f"{leg1_trains[0]['arrival'][2]} {leg1_trains[0]['arrival'][3]} {year} {leg1_trains[0]['arrival'][0]}", "%d %b %Y %H:%M")
-
-        for each_train in leg2_trains[:]:
-
-            leg2_very_departure = datetime.strptime(f"{each_train['departure'][2]} {each_train['departure'][3]} {year} {each_train['departure'][0]}", "%d %b %Y %H:%M")
-
-            if (leg2_very_departure > leg1_very_arrival + timedelta(minutes=15)):
-                leg2_trains.remove(each_train)
-
-        if leg1_trains and leg2_trains:
-            available_trains.append({
-                "intermediates": i,
-                "leg1": leg1_trains,
-                "leg2": leg2_trains
-            })
-    else:
-        print("Seat not found for intermediate", i)
-
-    end_time = time.localtime()
-    print(f"Time taken : {(end_time.tm_min*60 + end_time.tm_sec)-(start_time.tm_min*60 + start_time.tm_sec)}")
-    print(available_trains)
-
-print(web_scrapping(source, destination, date))
-
-end_time = time.localtime()
-print(f"Time taken : {(end_time.tm_min*60 + end_time.tm_sec)-(start_time.tm_min*60 + start_time.tm_sec)}")

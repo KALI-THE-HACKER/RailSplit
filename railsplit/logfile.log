@@ -1,0 +1,59 @@
+2025-06-20 23:21:11,039 - INFO - Request from IP : 127.0.0.1
+2025-06-20 23:21:11,040 - INFO - IP : 127.0.0.1 
+       -Source: majn
+       -Destination: ndls
+       -Date: 19072025
+2025-06-20 23:21:18,841 - INFO - Intermediates: ['BCT', 'JP', 'NGP', 'PUNE', 'CSTM', 'BPL', 'HYB', 'INDB', 'JHS', 'ST', 'UDZ', 'KOTA', 'AGC', 'AII', 'GWL', 'UBL', 'BRC', 'ANND', 'BGM', 'HPU', 'JL', 'KRNT', 'MTJ', 'NK', 'RTM', 'SUR', 'UJN', 'BJP', 'VR', 'AF']
+2025-06-20 23:36:44,434 - INFO - Request from IP : 127.0.0.1
+2025-06-20 23:36:44,434 - INFO - IP : 127.0.0.1 
+       -Source: majn
+       -Destination: ndls
+       -Date: 19072025
+2025-06-20 23:36:52,743 - INFO - Intermediates: ['BCT', 'JP', 'NGP', 'PUNE', 'CSTM', 'BPL', 'HYB', 'INDB', 'JHS', 'ST', 'UDZ', 'KOTA', 'AGC', 'AII', 'GWL', 'UBL', 'BRC', 'ANND', 'BGM', 'HPU', 'JL', 'KRNT', 'MTJ', 'NK', 'RTM', 'SUR', 'UJN', 'BJP', 'VR', 'AF']
+2025-06-20 23:37:07,859 - ERROR - Error processing intermediate BCT: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2025-06-20 23:38:01,753 - INFO - No leg1 trains found for intermediate: JP
+2025-06-20 23:38:34,710 - INFO - No leg1 trains found for intermediate: NGP
+2025-06-20 23:39:29,345 - INFO - No leg1 trains found for intermediate: PUNE
+2025-06-20 23:39:44,703 - ERROR - Error processing intermediate CSTM: Error 61 connecting to 127.0.0.1:6379. Connection refused.
+2025-06-20 23:40:55,210 - INFO - Request from IP : 127.0.0.1
+2025-06-20 23:40:55,210 - INFO - IP : 127.0.0.1 
+       -Source: majn
+       -Destination: ndls
+       -Date: 19072025
+2025-06-20 23:41:02,916 - INFO - Intermediates: ['BCT', 'JP', 'NGP', 'PUNE', 'CSTM', 'BPL', 'HYB', 'INDB', 'JHS', 'ST', 'UDZ', 'KOTA', 'AGC', 'AII', 'GWL', 'UBL', 'BRC', 'ANND', 'BGM', 'HPU', 'JL', 'KRNT', 'MTJ', 'NK', 'RTM', 'SUR', 'UJN', 'BJP', 'VR', 'AF']
+2025-06-20 23:41:35,478 - INFO - No leg1 trains found for intermediate: BCT
+2025-06-20 23:42:29,981 - INFO - No leg1 trains found for intermediate: JP
+2025-06-20 23:43:23,993 - INFO - No leg1 trains found for intermediate: NGP
+2025-06-20 23:44:18,154 - INFO - No leg1 trains found for intermediate: PUNE
+2025-06-20 23:44:50,235 - INFO - No valid connecting trains for intermediate: BPL after time filtering
+2025-06-20 23:45:44,063 - INFO - No leg1 trains found for intermediate: HYB
+
+
+
+
+
+
+
+
+2025-06-20 23:46:38,310 - INFO - No leg1 trains found for intermediate: INDB
+2025-06-20 23:46:42,833 - INFO - No leg1 trains found for intermediate: JHS
+2025-06-20 23:47:29,950 - INFO - No leg1 trains found for intermediate: UDZ
+2025-06-20 23:48:39,230 - INFO - No leg1 trains found for intermediate: AGC
+2025-06-20 23:49:33,564 - INFO - No leg1 trains found for intermediate: AII
+2025-06-20 23:50:27,817 - INFO - No leg1 trains found for intermediate: GWL
+2025-06-20 23:51:22,204 - INFO - No leg1 trains found for intermediate: UBL
+2025-06-20 23:52:30,120 - INFO - No leg1 trains found for intermediate: ANND
+2025-06-20 23:53:25,342 - INFO - No leg1 trains found for intermediate: BGM
+2025-06-20 23:54:20,375 - INFO - No leg1 trains found for intermediate: HPU
+2025-06-20 23:55:24,928 - INFO - No leg1 trains found for intermediate: JL
+2025-06-20 23:55:27,082 - INFO - No leg1 trains found for intermediate: KRNT
+2025-06-20 23:55:27,645 - INFO - No leg1 trains found for intermediate: MTJ
+2025-06-20 23:55:28,216 - INFO - No leg1 trains found for intermediate: NK
+2025-06-20 23:55:28,776 - INFO - No leg1 trains found for intermediate: RTM
+2025-06-20 23:55:29,350 - INFO - No leg1 trains found for intermediate: SUR
+2025-06-20 23:55:29,923 - INFO - No leg1 trains found for intermediate: UJN
+2025-06-20 23:57:19,060 - INFO - No leg1 trains found for intermediate: BJP
+2025-06-20 23:57:19,941 - INFO - No leg1 trains found for intermediate: VR
+2025-06-20 23:58:14,794 - INFO - No leg1 trains found for intermediate: AF
+2025-06-20 23:58:14,794 - INFO - IP: 127.0.0.1; 
+Time taken : 17.0 minutes 19.57936406135559 seconds
