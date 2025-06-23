@@ -172,7 +172,13 @@ async def fastapiapp(request: Request, x_api_key: str = Header(...)):
                                         "train2_departure": train2_departure.strftime("%d %B, %Y"),
                                         "train2_arrival": train2_arrival.strftime("%d %B, %Y"),
                                         "layover": layover,
-                                        "duration": duration
+                                        "duration": duration,
+                                        "train1_name" : train1['train_name'],
+                                        "train1_number": train1['train_number'],
+                                        "train2_name" : train2['train_name'],
+                                        "train2_number": train2['train_number'],
+                                        "train1_seat_availabilty": train1['seat_availabilty'],
+                                        "train2_seat_availabilty": train2['seat_availabilty']
                                     }
                                     #Upadate available_trains list
                                     available_trains.append(intermediate_result)
