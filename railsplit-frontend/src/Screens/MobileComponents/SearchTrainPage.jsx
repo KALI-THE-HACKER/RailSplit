@@ -31,6 +31,7 @@ function SearchTrainPage(){
     const [classDropdown, setClassDropdown] = useState(false);
     const [trainClass, setTrainClass] = useState('');
     const [departureDate, setDepartureDate] = useState(null);
+    const [formattedDate, setFormattedDate] = useState('');
     const [dateTimeBox, setDateTimeBox] = useState(false);
     const trainClasses = ['No preference', 'Sleeper', '3A', '2A', '1A']
 
@@ -137,7 +138,7 @@ function SearchTrainPage(){
                     origin: fromJunction,
                     destination: toJunction,
                     trainClass: trainClass,
-                    date: departureDate
+                    date: formattedDate
                 }
                 
                 navigate('/showtrains', {state: {Data}});
@@ -280,7 +281,18 @@ function SearchTrainPage(){
                         selected={departureDate}
                         placeholderText="Select date"
                         
-                        onChange={(date) => setDepartureDate(date)}
+                        onChange={(date) => {
+                            setDepartureDate(date);
+                          if (date) {
+                            const dd = String(date.getDate()).padStart(2, '0');
+                            const mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                            const yyyy = date.getFullYear();
+                            const formatted = `${dd}${mm}${yyyy}`;
+                            setFormattedDate(formatted);
+                          } else {
+                            setFormattedDate(null);
+                          }
+                        }}
                         className="h-10 w-[70vw] bg-[#28292E] rounded-[0.8rem] my-2 text-xl flex justify-start px-5 py-3 items-center cursor-pointer text-white z-0"
                         minDate={new Date()}
                         id="hiddenDatePicker"
