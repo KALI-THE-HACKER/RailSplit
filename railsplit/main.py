@@ -162,7 +162,7 @@ def algorithm_one(source, destination, coordinates):
         x2 = coordinates[1][0]
         y2 = coordinates[1][1]
         
-        for i in range(1, 4):
+        for i in range(1, 3):
             
             #Future implementation: Enhance this algorithm by limiting number of intermediates stations as per the distance between source and destination
             
