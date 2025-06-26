@@ -125,13 +125,13 @@ function ShowTrainPage() {
                         // Optionally log the error
                         alert("Error parsing server message: " + e.message);
                         setBackendStatus("Error parsing server message");
-                        setBackendStatusType("red");
+                        setBackendStatusType("#B91C1C");
                     }
                 };
 
                 eventSource.onerror = (err) => {
-                    setBackendStatus(`Connection lost! ${err.message}`);
-                    setBackendStatusType("red");
+                    setBackendStatus(`Connection lost due to some error!`);
+                    setBackendStatusType("#B91C1C");
                     eventSource.close();
                 };
 
@@ -177,29 +177,32 @@ function ShowTrainPage() {
                         </div>
                     </div>
                 </div>
-                <div className="fixed w-[90vw] mx-[5vw] px-3 h-fit bg-blue-600 text-white text-center rounded-lg z-1" style={{ marginTop: `${headerHeight + 10}px` }}>
+
+                {/* Snackbar for backendStatus */}
+                <div className="fixed w-[90vw] blue mx-[5vw] px-3 h-fit text-white text-center rounded-lg z-1" style={{ marginTop: `${headerHeight + 10}px`, backgroundColor: `${backendStatusType}` }}>
                     <p>{backendStatus}</p>
 
                 </div>
 
-                <div className="relative flex-1 bg-black h-full w-full overflow-y-auto flex flex-col items-center gap-3 px-4 bottom-5" style={{ marginTop: `${headerHeight +30}px` }}>
+                <div className="relative flex-1 bg-black h-full w-full overflow-y-auto flex flex-col items-center gap-3 px-4 bottom-5" style={{ marginTop: `${headerHeight +60}px` }}>
                     <p className="text-gray-300 bg-black text-center">-:  Direct trains :-</p>
 
-                    {directTrains.map((train, index) => (
+                    {directTrains.length !== 0 ?
+                    (directTrains.map((train, index) => (
                         <div key={index} className="bg-[#1c1c1e] h-fit rounded-xl w-full mx-auto px-5 py-3 rounded-box">
                             <div className="flex flex-row w-full justify-between">
                                 <div className="flex flex-col items-start">
                                     <h2 className="text-white text-2xl android-text-20">{train.departure?.[0]}</h2>
                                     <p className="text-gray-500 android-text-12">{origin?.code}</p>
-                                    <p className="text-gray-500 android-text-12 mb-1">
+                                    <p className="text-gray-500 android-text-12 font-bold text-[14px] mb-1">
                                         {train.departure?.[1]} {train.departure?.[2]} {train.departure?.[3]}
                                     </p>
                                 </div>
 
-                                <div className="flex flex-1 flex-col items-center justify-center gap-6">
+                                <div className="flex flex-1 flex-col items-center justify-center gap-4">
                                     <div />
                                     <div className="w-full flex items-center justify-center gap-[2px]">
-                                        {Array.from({ length: 17 }).map((_, i) => (
+                                        {Array.from({ length: 15 }).map((_, i) => (
                                             <div key={i} className="w-[8px] h-[2px] bg-[#3B3F48] rounded"></div>
                                         ))}
                                     </div>
@@ -213,7 +216,7 @@ function ShowTrainPage() {
                                 <div className="flex flex-col items-end">
                                     <h2 className="text-white text-2xl text-right android-text-20">{train.arrival?.[0]}</h2>
                                     <p className="text-gray-500 android-text-12">{destination?.code}</p>
-                                    <p className="text-gray-500 android-text-12 text-right">{train.arrival?.[1]} {train.arrival?.[2]} {train.arrival?.[3]}</p>
+                                    <p className="text-gray-500 android-text-12 text-[14px] font-bold text-right">{train.arrival?.[1]} {train.arrival?.[2]} {train.arrival?.[3]}</p>
                                 </div>
                             </div>
                             
@@ -226,58 +229,64 @@ function ShowTrainPage() {
                                             <p className="text-green-500 text-[11px]">{seats}</p>
                                             : seats.split(' ')[0] == "RAC" ?
                                             <p className="text-blue-500 text-[11px]">{seats}</p>
-                                            : <p className="text-red-500 text-[11px]">{seats}</p>
+                                            : <p className="text-#B91C1C-500 text-[11px]">{seats}</p>
                                         }
                                     </div>
                                 ))}
                             </div>
                         </div>
-                    ))}
+                    )))
+
+                    : <span className="loader" />}
 
                     <p className="text-white bg-black text-center">-:  In-direct trains  :-</p>
+                    {indirectTrains.length !== 0 ? 
 
-                    {indirectTrains.map((train, index) => (
+                    (indirectTrains.map((train, index) => (
                         <div key={index} className="bg-[#1c1c1e] h-fit rounded-xl w-full mx-auto px-5 py-3 rounded-box">
                             <div className="flex flex-row w-full justify-between">
                                 <div className="flex flex-col items-start">
                                     <h2 className="text-white text-2xl android-text-20">{train.train1_departure_time}</h2>
                                     <p className="text-gray-500 android-text-12">{origin?.code}</p>
-                                    <p className="text-gray-500 android-text-12 mb-1 text-left">
+                                    <p className="text-gray-500 android-text-12 mb-1 text-[14px] font-bold text-left">
                                         {train.train1_departure_date}
                                     </p>
                                 </div>
 
-                                <div className="flex flex-1 flex-col items-center justify-center gap-6">
-                                    <div className="">via {(allStations.find(st => st.Code === train.intermediate)).Name.charAt(0).toUpperCase() + (allStations.find(st => st.Code === train.intermediate)).Name.slice(1).toLowerCase()}</div>
+                                <div className="flex flex-1 flex-col items-center justify-start gap-2">
+                                    <div className="text-blue-300/60 text-[16px]">via {(allStations.find(st => st.Code === train.intermediate)).Name.charAt(0).toUpperCase() + (allStations.find(st => st.Code === train.intermediate)).Name.slice(1).toLowerCase()}</div>
                                     <div>
                                         
                                     </div>
                                     <div className="w-full flex items-center justify-center gap-[2px]">
-                                        {Array.from({ length: 17 }).map((_, i) => (
+                                        {Array.from({ length: 15 }).map((_, i) => (
                                             <div key={i} className="w-[8px] h-[2px] bg-[#3B3F48] rounded"></div>
                                         ))}
                                     </div>
-                                    <div className="text-center android-text-12 flex flex-col gap-2">
-                                        <span className="inline-block px-2 py-1 rounded bg-[#23242a] text-green-400 text-xs font-medium">
-                                            Duration: {timeFormatter(train.duration)}
-                                        </span>
-                                        <span className="inline-block px-2 py-1 rounded bg-[#23242a] text-green-400 text-xs font-medium">
-                                            Layover: {timeFormatter(train.layover)}
-                                        </span>
-                                    </div>
+                                    
                                 </div>
 
                                 <div className="flex flex-col items-end">
                                     <h2 className="text-white text-2xl text-right android-text-20">{train.train2_arrival_time}</h2>
                                     <p className="text-gray-500 android-text-1 items-end2">{destination?.code}</p>
-                                    <p className="text-gray-500 android-text-12 mb-1 text-right">
+                                    <p className="text-gray-500 android-text-12 mb-1 text-[14px] font-bold text-right">
                                         {train.train2_arrival_date}
                                     </p>
                                 </div>
                             </div>
+                            <div className="text-center android-text-12 flex flex-row  w-full justify-around pt-3 pb-1">
+                                <span className="inline-block px-2 py-1 rounded bg-[#23242a] text-green-400 text-xs font-medium">
+                                    Duration: {timeFormatter(train.duration)}
+                                </span>
+                                <span className="inline-block px-2 py-1 rounded bg-[#23242a] text-yellow-300 text-xs font-medium">
+                                    Layover: {timeFormatter(train.layover)}
+                                </span>
+                            </div>
                             
                         </div>
-                    ))}
+                    )))
+
+                    : <span className="loader"/>}
                 </div>
             </div>
         </>

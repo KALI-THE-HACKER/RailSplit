@@ -16,6 +16,30 @@ h2 {
     font-family: 'Nunito Sans', sans-serif;
 }
 
+.loader {
+  position: relative;
+  width: 75px;
+  height: 75px;
+}
+
+.loader:before , .loader:after{
+  content: '';
+  border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3) inset;
+}
+.loader:after {
+  box-shadow: 0 2px 0 #007bff inset;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  0% {  transform: rotate(0)}
+  100% { transform: rotate(360deg)}
+}
+    
+
 .is-android .android-text-20 {
   font-size: 20px !important; /* or 2px less than your default */
 }
