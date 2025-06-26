@@ -9,6 +9,10 @@ import logging
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
 
+# bg-green-700 → #15803D
+# bg-red-700 → #B91C1C
+# bg-blue-600 → #2563EB
+
 
 app = FastAPI()
 r = redis.Redis(host="127.0.0.1", port=6379, db=0)
@@ -126,7 +130,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
             try:
                 yield f"data: {json.dumps({
                     'status': 'Connection established!', 
-                    'type': 'green'})}\n\n"
+                    'type': '#15803D'})}\n\n"
                 
                 # Check if the result is already cached
                 cached_result = r.get(f"{source}-{destination}-{date}")
@@ -134,7 +138,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
 
                 #If cached result found, load them
                 if cached_result:
-                    yield f"data: {json.dumps({'status': 'Cached data found!', 'type': 'green'})}\n\n"
+                    yield f"data: {json.dumps({'status': 'Cached data found!', 'type': '#15803D'})}\n\n"
                     available_trains = json.loads(cached_result)
                     logging.info("Cached result found!")
                     yield f"data: {json.dumps(available_trains)}\n\n"
@@ -142,7 +146,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                 #If cached result not found, find direct trains
                 else:
                     # Send initial status
-                    yield f"data: {json.dumps({'status': 'searching direct trains...', 'type': 'blue'})}\n\n"
+                    yield f"data: {json.dumps({'status': 'searching direct trains...', 'type': '#2563EB'})}\n\n"
                     
                     direct_trains = await web_scrapping(source, destination, date)
                     if direct_trains:
@@ -152,9 +156,9 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                         # Cache the result
                         r.set(f"{source}-{destination}-{date}", json.dumps(available_trains), ex=604800) #7 days expiry
                     else:
-                        yield f"data: {json.dumps({'status': 'No direct trains found!', 'type': 'red'})}\n\n"
+                        yield f"data: {json.dumps({'status': 'No direct trains found!', 'type': '#B91C1C'})}\n\n"
 
-                yield f"data: {json.dumps({'status': 'Searching for intermediate stations...', 'type': 'blue'})}\n\n"
+                yield f"data: {json.dumps({'status': 'Searching for intermediate stations...', 'type': '#2563EB'})}\n\n"
 
                 #If cached fetchedIntermediates found, load them
                 if cached_fetchedIntermediates:
@@ -174,16 +178,16 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
 
 
                 if not intermediates:
-                    yield f"data: {json.dumps({'status': 'Unfortunately no intermediates found!', 'type': 'red'})}\n\n"
+                    yield f"data: {json.dumps({'status': 'Unfortunately no intermediates found!', 'type': '#B91C1C'})}\n\n"
                     return
 
-                yield f"data: {json.dumps({'status': f'Searching for trains via intermediate stations!', 'type': 'blue'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Searching for trains via intermediate stations!', 'type': '#2563EB'})}\n\n"
 
                 for idx, i in enumerate(intermediates):
                     try:
                         logging.info(f"Processing intermediate station: {i}")
                         # Send progress update
-                        yield f"data: {json.dumps({'status': f'Searching for {i}...', 'type': 'blue'})}\n\n"
+                        yield f"data: {json.dumps({'status': f'Searching for {i}...', 'type': '#2563EB'})}\n\n"
                         
                         leg1_trains = await web_scrapping(source, i, date) or []
                         # logging.info(f"Fetched leg1 trains for {source} -> {i}: {len(leg1_trains)} found")
@@ -238,7 +242,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                     # logging.info(f"Appended intermediate_result for {i} to available_trains. Total now: {len(available_trains)}")
 
                                 else:
-                                    yield f"data: {json.dumps({'status': f'Found nothing for {i}\n searching others...', 'type': 'red'})}\n\n"
+                                    yield f"data: {json.dumps({'status': f'Found nothing for {i}\n searching others...', 'type': '#B91C1C'})}\n\n"
 
                                     # logging.info(f"No valid connecting trains for intermediate: {i} after time filtering")
 
@@ -256,7 +260,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
 
                     except Exception as e:
                         logging.error(f"Error processing intermediate {i}: {str(e)}")
-                        yield f"data: {json.dumps({'status': f'Error processing station {i}: {str(e)}', 'type': 'red'})}\n\n"
+                        yield f"data: {json.dumps({'status': f'Error processing station {i}: {str(e)}', 'type': '#B91C1C'})}\n\n"
                         continue
 
                 # Send completion status
@@ -264,11 +268,11 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                 total_time = end_time - start_time
                 logging.info(f"IP: {ip}; \nTime taken : {total_time//60} minutes {total_time%60} seconds")
                 
-                yield f"data: {json.dumps({'status': f'Completed; Time taken: {total_time//60} minutes {total_time%60} seconds', 'type': 'green'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Completed; Time taken: {total_time//60} minutes {total_time%60} seconds', 'type': '#15803D'})}\n\n"
 
             except Exception as e:
                 logging.error(f"Error in main function: {str(e)}")
-                yield f"data: {json.dumps({'status': f'Processing error: {str(e)}', 'type': 'red'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Processing error: {str(e)}', 'type': '#B91C1C'})}\n\n"
 
         # Fixed event stream function
         async def event_stream():
@@ -284,7 +288,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                     
             except Exception as e:
                 logging.error(f"Error in event stream: {str(e)}")
-                yield f"data: {json.dumps({'status': f'Stream error: {str(e)}', 'type': 'red'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Stream error: {str(e)}', 'type': '#B91C1C'})}\n\n"
             finally:
                 # Send final event to indicate stream end
                 yield f"data: {json.dumps({'status': 'stream_ended'})}\n\n"

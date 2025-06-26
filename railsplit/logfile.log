@@ -14101,3 +14101,151 @@ Traceback (most recent call last):
     self._stopped_future.set_result(None)
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
 asyncio.exceptions.InvalidStateError: invalid state
+2025-06-27 03:46:21,347 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:46:21,348 - INFO - User ID generated: 37faff35 for IP: 192.168.29.163
+2025-06-27 03:46:21,349 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:46:21,783 - INFO - Cached result found!
+2025-06-27 03:46:21,986 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:46:23,742 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:46:23,844 - INFO - Processing intermediate station: ET
+2025-06-27 03:46:28,746 - INFO - No leg1 trains found for intermediate: ET
+2025-06-27 03:46:28,746 - INFO - Processing intermediate station: NK
+2025-06-27 03:47:23,916 - INFO - No leg1 trains found for intermediate: NK
+2025-06-27 03:47:23,917 - INFO - Processing intermediate station: UJN
+2025-06-27 03:47:28,501 - INFO - No leg1 trains found for intermediate: UJN
+2025-06-27 03:47:28,501 - INFO - Processing intermediate station: BCT
+2025-06-27 03:56:07,070 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:56:07,073 - INFO - User ID generated: 28d18986 for IP: 192.168.29.163
+2025-06-27 03:56:07,073 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:56:07,794 - INFO - Cached result found!
+2025-06-27 03:56:07,997 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:56:11,299 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:56:11,400 - INFO - Processing intermediate station: ET
+2025-06-27 03:56:11,789 - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-1126' coro=<Connection.run() done, defined at /Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py:272> exception=InvalidStateError('invalid state')>
+Traceback (most recent call last):
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 281, in run
+    await self._transport.run()
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_transport.py", line 171, in run
+    self._stopped_future.set_result(None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+asyncio.exceptions.InvalidStateError: invalid state
+2025-06-27 03:56:16,941 - INFO - No leg1 trains found for intermediate: ET
+2025-06-27 03:56:16,941 - INFO - Processing intermediate station: NK
+2025-06-27 03:56:19,890 - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-1143' coro=<Connection.run() done, defined at /Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py:272> exception=InvalidStateError('invalid state')>
+Traceback (most recent call last):
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 281, in run
+    await self._transport.run()
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_transport.py", line 171, in run
+    self._stopped_future.set_result(None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+asyncio.exceptions.InvalidStateError: invalid state
+2025-06-27 03:56:20,197 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:56:20,199 - INFO - User ID generated: 7264d345 for IP: 192.168.29.163
+2025-06-27 03:56:20,200 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:56:20,807 - INFO - Cached result found!
+2025-06-27 03:56:21,010 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:56:22,884 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:56:22,986 - INFO - Processing intermediate station: ET
+2025-06-27 03:56:23,472 - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-1153' coro=<Connection.run() done, defined at /Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py:272> exception=InvalidStateError('invalid state')>
+Traceback (most recent call last):
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 281, in run
+    await self._transport.run()
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_transport.py", line 171, in run
+    self._stopped_future.set_result(None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+asyncio.exceptions.InvalidStateError: invalid state
+2025-06-27 03:56:24,127 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:56:24,127 - INFO - User ID generated: 036043d9 for IP: 192.168.29.163
+2025-06-27 03:56:24,127 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:56:24,540 - INFO - Cached result found!
+2025-06-27 03:56:24,742 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:56:27,273 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:56:27,375 - INFO - Processing intermediate station: ET
+2025-06-27 03:56:34,455 - INFO - No leg1 trains found for intermediate: ET
+2025-06-27 03:56:34,455 - INFO - Processing intermediate station: NK
+2025-06-27 03:57:29,937 - INFO - No leg1 trains found for intermediate: NK
+2025-06-27 03:57:29,938 - INFO - Processing intermediate station: UJN
+2025-06-27 03:57:35,401 - INFO - No leg1 trains found for intermediate: UJN
+2025-06-27 03:57:35,401 - INFO - Processing intermediate station: BCT
+2025-06-27 03:57:37,222 - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-1183' coro=<Connection.run() done, defined at /Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py:272> exception=InvalidStateError('invalid state')>
+Traceback (most recent call last):
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 281, in run
+    await self._transport.run()
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_transport.py", line 171, in run
+    self._stopped_future.set_result(None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+asyncio.exceptions.InvalidStateError: invalid state
+2025-06-27 03:57:37,511 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:57:37,512 - INFO - User ID generated: e5034b40 for IP: 192.168.29.163
+2025-06-27 03:57:37,512 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:57:38,224 - INFO - Cached result found!
+2025-06-27 03:57:38,427 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:57:41,332 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:57:41,433 - INFO - Processing intermediate station: ET
+2025-06-27 03:57:46,938 - ERROR - Task exception was never retrieved
+future: <Task finished name='Task-1192' coro=<Connection.run() done, defined at /Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py:272> exception=InvalidStateError('invalid state')>
+Traceback (most recent call last):
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 281, in run
+    await self._transport.run()
+  File "/Users/luckyverma/Desktop/project-O/railsplit/appenv/lib/python3.13/site-packages/playwright/_impl/_transport.py", line 171, in run
+    self._stopped_future.set_result(None)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+asyncio.exceptions.InvalidStateError: invalid state
+2025-06-27 03:57:47,423 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:57:47,424 - INFO - User ID generated: dc4e90c6 for IP: 192.168.29.163
+2025-06-27 03:57:47,424 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:57:47,609 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:57:47,610 - INFO - User ID generated: 197898fc for IP: 192.168.29.163
+2025-06-27 03:57:47,610 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:57:47,962 - INFO - Cached result found!
+2025-06-27 03:57:48,164 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:57:50,106 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:57:50,107 - INFO - Cached result found!
+2025-06-27 03:57:50,208 - INFO - Processing intermediate station: ET
+2025-06-27 03:57:50,310 - INFO - Cached fetchedIntermediates found!
+2025-06-27 03:57:52,134 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 03:57:52,236 - INFO - Processing intermediate station: ET
+2025-06-27 03:58:00,896 - INFO - No leg1 trains found for intermediate: ET
+2025-06-27 03:58:00,897 - INFO - Processing intermediate station: NK
+2025-06-27 03:58:01,740 - INFO - No leg1 trains found for intermediate: ET
+2025-06-27 03:58:01,741 - INFO - Processing intermediate station: NK
+2025-06-27 03:59:57,412 - INFO - Request from IP : 192.168.29.163
+2025-06-27 03:59:57,415 - INFO - User ID generated: 05cb392b for IP: 192.168.29.163
+2025-06-27 03:59:57,415 - INFO - IP : 192.168.29.163 
+       -Source: {'code': 'JP', 'name': 'Jaipur'}
+       -Destination: {'code': 'CSTM', 'name': 'Mumbai cst'}
+       -Date: 14082025
+2025-06-27 03:59:58,137 - INFO - Cached result found!
+2025-06-27 03:59:58,340 - INFO - Cached fetchedIntermediates found!
+2025-06-27 04:00:00,154 - INFO - Intermediates: ['BCT', 'ADI', 'INDB', 'ST', 'UDZ', 'KOTA', 'AII', 'BRC', 'ANND', 'BVC', 'ET', 'JL', 'NK', 'RTM', 'UJN', 'VR']
+2025-06-27 04:00:00,256 - INFO - Processing intermediate station: KOTA
+2025-06-27 04:00:28,379 - INFO - Yielding updated available_trains, total: 224
+2025-06-27 04:00:28,482 - INFO - Processed intermediate KOTA successfully
+2025-06-27 04:00:28,485 - INFO - Processing intermediate station: BRC
+2025-06-27 04:00:52,242 - INFO - No leg2 trains found for intermediate: BRC
+2025-06-27 04:00:52,243 - INFO - Processing intermediate station: BVC
