@@ -107,6 +107,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
         if user_id_data is None:
             raise HTTPException(status_code=404, detail="User ID not found in Redis.")
         
+        
         user_id_data_json = json.loads(user_id_data)
         source = user_id_data_json.get("source")
         destination = user_id_data_json.get("destination")
@@ -123,13 +124,17 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
             start_time = time.time()
 
             try:
+                yield f"data: {json.dumps({
+                    'status': 'Connection established!', 
+                    'type': 'green'})}\n\n"
+                
                 # Check if the result is already cached
                 cached_result = r.get(f"{source}-{destination}-{date}")
                 cached_fetchedIntermediates = r.get(f"{source}-{destination}-{date}-fetchedIntermediates")
 
                 #If cached result found, load them
                 if cached_result:
-                    yield f"data: {json.dumps({'status': 'Cached data found!'})}\n\n"
+                    yield f"data: {json.dumps({'status': 'Cached data found!', 'type': 'green'})}\n\n"
                     available_trains = json.loads(cached_result)
                     logging.info("Cached result found!")
                     yield f"data: {json.dumps(available_trains)}\n\n"
@@ -137,7 +142,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                 #If cached result not found, find direct trains
                 else:
                     # Send initial status
-                    yield f"data: {json.dumps({'status': 'searching_direct_trains'})}\n\n"
+                    yield f"data: {json.dumps({'status': 'searching direct trains...', 'type': 'blue'})}\n\n"
                     
                     direct_trains = await web_scrapping(source, destination, date)
                     if direct_trains:
@@ -147,45 +152,41 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                         # Cache the result
                         r.set(f"{source}-{destination}-{date}", json.dumps(available_trains), ex=604800) #7 days expiry
                     else:
-                        yield f"data: {json.dumps({'status': 'no_direct_trains_found'})}\n\n"
+                        yield f"data: {json.dumps({'status': 'No direct trains found!', 'type': 'red'})}\n\n"
+
+                yield f"data: {json.dumps({'status': 'Searching for intermediate stations...', 'type': 'blue'})}\n\n"
 
                 #If cached fetchedIntermediates found, load them
                 if cached_fetchedIntermediates:
-                    yield f"data: {json.dumps({'status': 'Cached fetchedIntermediates found!'})}\n\n"
+                    # yield f"data: {json.dumps({'status': 'Cached fetchedIntermediates found!'})}\n\n"
                     fetchedIntermediates = json.loads(cached_fetchedIntermediates)
                     logging.info("Cached fetchedIntermediates found!")
 
                 #If cached fetchedIntermediates not found, initialize empty list    
                 else:
                     fetchedIntermediates = []
-
-                # Send status update
-                yield f"data: {json.dumps({'status': 'finding_intermediate_stations'})}\n\n"
-                
-                logging.info("Starting algo-1")
                 coordinates = st_code_to_cartesian(source, destination)
                 intermediates = algorithm_one(source, destination, coordinates)
-                logging.info("Ending algo-2")
+                
                 logging.info(f"Intermediates: {intermediates}")
 
                 intermediates = list(set(intermediates) - set(fetchedIntermediates)) 
 
 
                 if not intermediates:
-                    yield f"data: {json.dumps({'status': 'no_intermediates_found'})}\n\n"
-                    yield f"data: {json.dumps({'status': 'completed'})}\n\n"
+                    yield f"data: {json.dumps({'status': 'Unfortunately no intermediates found!', 'type': 'red'})}\n\n"
                     return
 
-                yield f"data: {json.dumps({'status': f'checking_{len(intermediates)}_intermediate_stations'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Searching for trains via intermediate stations!', 'type': 'blue'})}\n\n"
 
                 for idx, i in enumerate(intermediates):
                     try:
                         logging.info(f"Processing intermediate station: {i}")
                         # Send progress update
-                        yield f"data: {json.dumps({'status': f'checking_intermediate_{idx+1}_of_{len(intermediates)}', 'station': i})}\n\n"
+                        yield f"data: {json.dumps({'status': f'Searching for {i}...', 'type': 'blue'})}\n\n"
                         
                         leg1_trains = await web_scrapping(source, i, date) or []
-                        logging.info(f"Fetched leg1 trains for {source} -> {i}: {len(leg1_trains)} found")
+                        # logging.info(f"Fetched leg1 trains for {source} -> {i}: {len(leg1_trains)} found")
                         
                         if not leg1_trains:
                             logging.info(f"No leg1 trains found for intermediate: {i}")
@@ -195,7 +196,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                         leg2_day2_trains = await web_scrapping(i, destination, (datetime.strptime(date, "%d%m%Y")+timedelta(days=1)).strftime("%d%m%Y")) or []
 
                         leg2_trains = leg2_day1_trains + leg2_day2_trains
-                        logging.info(f"Fetched leg2 trains for {i} -> {destination}: {len(leg2_trains)} found")
+                        # logging.info(f"Fetched leg2 trains for {i} -> {destination}: {len(leg2_trains)} found")
 
                         if not leg2_trains:
                             logging.info(f"No leg2 trains found for intermediate: {i}")
@@ -216,24 +217,30 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                 if(train2_departure > train1_arrival + timedelta(minutes=15)):
                                     layover = time_difference_calculator(train2_departure, train1_arrival)
                                     duration = time_difference_calculator(train2_arrival, train1_departure, layover)
-                                    logging.info(f"Valid connection found: {train1['from_station']}->{i}->{train2['to_station']}, layover: {layover} min, duration: {duration} min")
+                                    # logging.info(f"Valid connection found: {train1['from_station']}->{i}->{train2['to_station']}, layover: {layover} min, duration: {duration} min")
                                     intermediate_result = {
                                         "intermediate": i,
                                         "origin": train1['from_station'],
                                         "destination": train2['to_station'],
-                                        "train1_departure": train1_departure.strftime("%d %B, %Y"),
-                                        "train1_arrival": train1_arrival.strftime("%d %B, %Y"),
-                                        "train2_departure": train2_departure.strftime("%d %B, %Y"),
-                                        "train2_arrival": train2_arrival.strftime("%d %B, %Y"),
+                                        "train1_departure_date": train1_departure.strftime("%a, %d %B"),
+                                        "train1_departure_time": train1_departure.strftime("%H:%M"),
+                                        "train1_arrival_date": train1_arrival.strftime("%a, %d %B"),
+                                        "train1_arrival_time": train1_arrival.strftime("%H:%M"),
+                                        "train2_departure_date": train2_departure.strftime("%a, %d %B"),
+                                        "train2_departure_time": train2_departure.strftime("%H:%M"),
+                                        "train2_arrival_date": train2_arrival.strftime("%a, %d %B"),
+                                        "train2_arrival_time": train2_arrival.strftime("%H:%M"),
                                         "layover": layover,
                                         "duration": duration
                                     }
                                     #Upadate available_trains list
                                     available_trains.append(intermediate_result)
-                                    logging.info(f"Appended intermediate_result for {i} to available_trains. Total now: {len(available_trains)}")
+                                    # logging.info(f"Appended intermediate_result for {i} to available_trains. Total now: {len(available_trains)}")
 
                                 else:
-                                    logging.info(f"No valid connecting trains for intermediate: {i} after time filtering")
+                                    yield f"data: {json.dumps({'status': f'Found nothing for {i}\n searching others...', 'type': 'red'})}\n\n"
+
+                                    # logging.info(f"No valid connecting trains for intermediate: {i} after time filtering")
 
                         # Send the updated results
                         logging.info(f"Yielding updated available_trains, total: {len(available_trains)}")
@@ -245,11 +252,11 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                         # Cache the result
                         r.set(f"{source}-{destination}-{date}", json.dumps(available_trains))
                         r.set(f"{source}-{destination}-{date}-fetchedIntermediates", json.dumps(fetchedIntermediates))
-                        logging.info(f"Cached results for {source}-{destination}-{date}")
+                        # logging.info(f"Cached results for {source}-{destination}-{date}")
 
                     except Exception as e:
                         logging.error(f"Error processing intermediate {i}: {str(e)}")
-                        yield f"data: {json.dumps({'error': f'Error processing station {i}: {str(e)}'})}\n\n"
+                        yield f"data: {json.dumps({'status': f'Error processing station {i}: {str(e)}', 'type': 'red'})}\n\n"
                         continue
 
                 # Send completion status
@@ -257,11 +264,11 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                 total_time = end_time - start_time
                 logging.info(f"IP: {ip}; \nTime taken : {total_time//60} minutes {total_time%60} seconds")
                 
-                yield f"data: {json.dumps({'status': 'completed', 'total_time': f'{total_time//60} minutes {total_time%60} seconds', 'total_results': len(available_trains)})}\n\n"
+                yield f"data: {json.dumps({'status': f'Completed; Time taken: {total_time//60} minutes {total_time%60} seconds', 'type': 'green'})}\n\n"
 
             except Exception as e:
                 logging.error(f"Error in main function: {str(e)}")
-                yield f"data: {json.dumps({'error': f'Processing error: {str(e)}'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Processing error: {str(e)}', 'type': 'red'})}\n\n"
 
         # Fixed event stream function
         async def event_stream():
@@ -277,7 +284,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                     
             except Exception as e:
                 logging.error(f"Error in event stream: {str(e)}")
-                yield f"data: {json.dumps({'error': f'Stream error: {str(e)}'})}\n\n"
+                yield f"data: {json.dumps({'status': f'Stream error: {str(e)}', 'type': 'red'})}\n\n"
             finally:
                 # Send final event to indicate stream end
                 yield f"data: {json.dumps({'status': 'stream_ended'})}\n\n"
