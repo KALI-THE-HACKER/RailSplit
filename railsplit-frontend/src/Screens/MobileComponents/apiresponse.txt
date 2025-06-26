@@ -2,83 +2,140 @@
     {
         "Direct-trains": [
             {
-                "train_number": "12618",
-                "train_name": "MNGLA LKSDP EXP",
-                "from_station": "NZM",
-                "to_station": "MAJN",
+                "train_number": "14701",
+                "train_name": "ARAVALI EXPRESS",
+                "from_station": "JP",
+                "to_station": "BDTS",
                 "seat_availabilty": {
-                    "3E": "AVL 33",
-                    "3A": "AVL 33",
-                    "2A": "AVL 15",
-                    "SL": "Regret"
+                    "SL": "AVL 28",
+                    "3E": "AVL 40",
+                    "3A": "AVL 12",
+                    "2A": "AVL 8"
                 },
                 "departure": [
-                    "05:35",
-                    "Sat,",
-                    "19",
-                    "Jul"
+                    "09:25",
+                    "Thu,",
+                    "14",
+                    "Aug"
                 ],
                 "arrival": [
-                    "23:35",
-                    "Sun,",
-                    "20",
-                    "Jul"
+                    "06:15",
+                    "Fri,",
+                    "15",
+                    "Aug"
                 ],
-                "duration": "42hr"
+                "duration": "20hr 50min"
             },
             {
-                "train_number": "12284",
-                "train_name": "NZM ERS DURONTO",
-                "from_station": "NZM",
-                "to_station": "MAJN",
+                "train_number": "12956",
+                "train_name": "JP MMCT SF EXP",
+                "from_station": "JP",
+                "to_station": "MMCT",
                 "seat_availabilty": {
-                    "SL": "AVL 32",
-                    "3A": "AVL 37",
-                    "2A": "AVL 12",
-                    "1A": "AVL 2",
-                    "2S": "NOT AVL"
+                    "SL": "AVL 61",
+                    "3A": "AVL 94",
+                    "1A": "AVL 9"
                 },
                 "departure": [
-                    "21:40",
-                    "Sat,",
-                    "19",
-                    "Jul"
+                    "14:00",
+                    "Thu,",
+                    "14",
+                    "Aug"
                 ],
                 "arrival": [
-                    "09:20",
-                    "Mon,",
-                    "21",
-                    "Jul"
+                    "06:55",
+                    "Fri,",
+                    "15",
+                    "Aug"
                 ],
-                "duration": "35hr 40min"
+                "duration": "16hr 55min"
+            },
+            {
+                "train_number": "12240",
+                "train_name": "MMCT DURONTO EXP",
+                "from_station": "JP",
+                "to_station": "MMCT",
+                "seat_availabilty": {
+                    "3E": "AVL 16",
+                    "3A": "AVL 144",
+                    "2A": "AVL 22",
+                    "1A": "AVL 3"
+                },
+                "departure": [
+                    "16:35",
+                    "Thu,",
+                    "14",
+                    "Aug"
+                ],
+                "arrival": [
+                    "08:20",
+                    "Fri,",
+                    "15",
+                    "Aug"
+                ],
+                "duration": "15hr 45min"
             }
         ]
     },
     {
-        "intermediate": "UBL",
-        "origin": "NZM",
-        "destination": "MAQ",
-        "train1_departure": "19 July, 2025",
-        "train1_arrival": "20 July, 2025",
-        "train2_departure": "20 July, 2025",
-        "train2_arrival": "21 July, 2025",
-        "layover": 45.0,
-        "duration": 2925.0,
-        "train1_name": "YPR SAMPARK KRT",
-        "train1_number": "12650",
-        "train2_name": "BJP MAQ EXP",
-        "train2_number": "07377",
-        "train1_seat_availabilty": {
-            "SL": "AVL 69",
-            "1A": "AVL 12",
-            "3A": "RAC 14",
-            "2A": "RAC 2",
-            "3E": "NOT AVL"
-        },
-        "train2_seat_availabilty": {
-            "SL": "AVL 302",
-            "3A": "AVL 150",
-            "2A": "AVL 36"
-        }
-    }
+        "intermediate": "INDB",
+        "origin": "JP",
+        "destination": "MMCT",
+        "train1_departure_date": "14 August, 2025",
+        "train1_departure_time": "09:58",
+        "train1_arrival_date": "14 August, 2025",
+        "train1_arrival_time": "21:05",
+        "train2_departure_date": "15 August, 2025",
+        "train2_departure_time": "17:40",
+        "train2_arrival_date": "16 August, 2025",
+        "train2_arrival_time": "06:40",
+        "layover": 1235.0,
+        "duration": 1447.0
+    },
+    {
+        "intermediate": "INDB",
+        "origin": "JP",
+        "destination": "MMCT",
+        "train1_departure_date": "14 August, 2025",
+        "train1_departure_time": "09:58",
+        "train1_arrival_date": "14 August, 2025",
+        "train1_arrival_time": "21:05",
+        "train2_departure_date": "15 August, 2025",
+        "train2_departure_time": "21:00",
+        "train2_arrival_date": "16 August, 2025",
+        "train2_arrival_time": "08:20",
+        "layover": 1435.0,
+        "duration": 1347.0
+    },
+    {
+        "intermediate": "KOTA",
+        "origin": "JP",
+        "destination": "BDTS",
+        "train1_departure_date": "14 August, 2025",
+        "train1_departure_time": "00:35",
+        "train1_arrival_date": "14 August, 2025",
+        "train1_arrival_time": "05:15",
+        "train2_departure_date": "14 August, 2025",
+        "train2_departure_time": "06:30",
+        "train2_arrival_date": "14 August, 2025",
+        "train2_arrival_time": "20:55",
+        "layover": 75.0,
+        "duration": 1145.0
+    },
+    {
+        "intermediate": "KOTA",
+        "origin": "JP",
+        "destination": "MMCT",
+        "train1_departure_date": "14 August, 2025",
+        "train1_departure_time": "00:35",
+        "train1_arrival_date": "14 August, 2025",
+        "train1_arrival_time": "05:15",
+        "train2_departure_date": "14 August, 2025",
+        "train2_departure_time": "10:20",
+        "train2_arrival_date": "14 August, 2025",
+        "train2_arrival_time": "23:35",
+        "layover": 305.0,
+        "duration": 1075.0
+    },
+
 ]
