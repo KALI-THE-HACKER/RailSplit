@@ -222,6 +222,8 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                     layover = time_difference_calculator(train2_departure, train1_arrival)
                                     duration = time_difference_calculator(train2_arrival, train1_departure, layover)
                                     # logging.info(f"Valid connection found: {train1['from_station']}->{i}->{train2['to_station']}, layover: {layover} min, duration: {duration} min")
+
+                                    logging.info(f"Layover : {layover}")
                                     intermediate_result = {
                                         "intermediate": i,
                                         "origin": train1['from_station'],
@@ -234,6 +236,12 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                         "train2_departure_time": train2_departure.strftime("%H:%M"),
                                         "train2_arrival_date": train2_arrival.strftime("%a, %d %B"),
                                         "train2_arrival_time": train2_arrival.strftime("%H:%M"),
+                                        "train1_number": train1['train-number'],
+                                        "train1_name": train1['train_name'],
+                                        "train2_number": train2['train-number'],
+                                        "train2_name": train2['train_name'],
+                                        "train1_seat_availability": train1['seat_availabilty'],
+                                        "train2_seat_availability": train2['seat_availabilty'],
                                         "layover": layover,
                                         "duration": duration
                                     }
