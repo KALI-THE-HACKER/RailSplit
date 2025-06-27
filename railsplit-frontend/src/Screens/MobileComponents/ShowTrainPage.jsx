@@ -98,7 +98,7 @@ function ShowTrainPage() {
                         setIndirectTrains([]);
                     } else {
                         // Handle other possible structures or ignore
-                        //Do nothing
+                        // Do nothing
                     }
                 }
 
@@ -154,6 +154,8 @@ function ShowTrainPage() {
     const timeFormatter = (timeInMinutes) => {
         if(Math.floor(timeInMinutes/60)>=1){
             return `${Math.floor(timeInMinutes/60)}hr ${timeInMinutes%60}min`
+        } else{
+            return `${timeInMinutes}min`
         }
     };
 
