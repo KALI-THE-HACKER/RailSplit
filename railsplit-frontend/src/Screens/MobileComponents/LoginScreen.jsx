@@ -5,6 +5,14 @@ import image from "/image-2.png";
 function LoginScreen(){
     const navigate = useNavigate();
 
+    useEffect(() => {
+        // Replace 'token' with your actual key
+        const token = localStorage.getItem('username');
+        if (token) {
+            navigate('/'); // Redirect to homepage if logged in
+        }
+    }, [navigate]);
+
     return(
         <>
             <div className="h-screen w-full relative bg-black">
