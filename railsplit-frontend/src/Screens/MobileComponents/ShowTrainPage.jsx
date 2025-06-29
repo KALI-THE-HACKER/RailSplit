@@ -21,6 +21,8 @@ function ShowTrainPage() {
     const [indirectTrains, setIndirectTrains] = useState([]);
     const [allStations, setAllStations] = useState([]);
     const [popupCardData, setPopupCardData] = useState(null);
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationShowed, setNotificationShowed] = useState(false);
 
 
 
@@ -52,7 +54,20 @@ function ShowTrainPage() {
         }catch(err){
             alert(err);
         }
+
     }, []);
+
+    useEffect(() => {
+        // Show notification telling user about popup feature
+        if(indirectTrains.length !== 0 && !notificationShowed){
+            setShowNotification(true);
+            const notificationTimeout = setTimeout(() => {
+                setShowNotification(false);
+            }, 6000); //Timeout 3 seconds
+            setNotificationShowed(true);
+            return () => clearTimeout(notificationTimeout);
+        }
+    }, [indirectTrains]);
 
     //Making bg unclickable and unscrollable when the popup is active
     useEffect(() => {
@@ -176,7 +191,7 @@ function ShowTrainPage() {
     return (
         <>
             <div className="relative h-screen w-full bg-black flex flex-col">
-                <div ref={headerRef} className="fixed top-0 h-fit w-full bg-[#16161a] px-2 py-2 flex flex-col gap-7 rounded-b-2xl z-50">
+                <div ref={headerRef} className="fixed top-0 h-fit w-full bg-[#16161a] px-2 py-2 flex flex-col gap-7 rounded-b-2xl z-20">
                     <div className="flex flex-row items-center w-full">
                         <i onClick={() => navigate('/searchtrains')} className="absolute fa-solid fa-angle-left text-[#767676] text-2xl"></i>
                         <h2 className="relative text-white text-lg top-[4px] left-1/2 -translate-x-1/2">Trains with confirm seat</h2>
@@ -195,12 +210,12 @@ function ShowTrainPage() {
                 </div>
 
                 {/* Snackbar for backendStatus */}
-                <div className="fixed w-[90vw] blue mx-[5vw] px-3 h-fit text-white text-center rounded-lg z-1" style={{ marginTop: `${headerHeight + 10}px`, backgroundColor: `${backendStatusType}` }}>
+                <div className="fixed w-[90vw] blue mx-[5vw] px-3 h-fit text-white text-center rounded-lg z-20" style={{ marginTop: `${headerHeight + 10}px`, backgroundColor: `${backendStatusType}` }}>
                     <p>{backendStatus}</p>
-
+                    <p>Indirect trains yet found: {indirectTrains.length}</p>
                 </div>
 
-                <div className="relative flex-1 bg-black h-full w-full overflow-y-auto flex flex-col items-center gap-3 px-4 bottom-5" style={{ marginTop: `${headerHeight +60}px` }}>
+                <div className="relative flex-1 bg-black h-full w-full overflow-y-auto flex flex-col items-center gap-3 px-4 bottom-5" style={{ marginTop: `${headerHeight +80}px` }}>
                     <p className="text-gray-300 bg-black text-center">-:  Direct trains :-</p>
 
                     {directTrains.length !== 0 ?
@@ -310,7 +325,7 @@ function ShowTrainPage() {
                 {/*Popup card*/}
 
                 {popupCardData &&
-                (<div  className="fixed z-50 h-auto w-[45vh] bg-neutral-900 top-5/9 -translate-y-1/2 left-1/2 -translate-x-1/2 rounded-[2rem] shadow-2xl py-3 px-4 flex flex-col gap-5">
+                (<div  className="fixed z-30 h-auto w-[45vh] bg-neutral-900 top-5/9 -translate-y-1/2 left-1/2 -translate-x-1/2 rounded-[2rem] shadow-2xl py-3 px-4 flex flex-col gap-5">
                     <span className="text-center text-[16px]">-: Route details :-</span>
                     <span onClick={() => setPopupCardData(null)} className="absolute right-4 underline text-gray-500">Close</span>
 
@@ -471,6 +486,23 @@ function ShowTrainPage() {
                     </div>
                 </div>
                 )}
+
+                    {showNotification && (
+                    <div className="fixed z-40 top-35 right-0 w-7/8 px-3 py-2 backdrop-blur-md bg-blue-500/20 border border-blue-300/30 rounded-xl shadow-md flex items-start space-x-3">
+                        <i className="fa fa-thumbs-up animate-bounce mt-1"></i>
+                        <div>
+                        <strong className="block font-semibold">Tip!</strong>
+                        <span className="leading-[1.1]">You can enlarge the indirect train's card to see proper route details.</span>
+                        </div>
+                        <button 
+                        onClick={() => setShowNotification(false)} 
+                        className="ml-4 text-white hover:text-gray-200"
+                        >
+                        <i className="fa fa-times"></i>
+                        </button>
+                    </div>
+                    )}
+
             </div>
         </>
     );
