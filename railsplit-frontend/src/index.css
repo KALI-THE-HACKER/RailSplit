@@ -38,6 +38,113 @@ h2 {
   0% {  transform: rotate(0)}
   100% { transform: rotate(360deg)}
 }
+
+
+/* Route card CSS */
+
+/* body {
+  background: #0e0e0e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+} */
+
+.glass-card {
+  width: 310px;
+  height: 130px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.train-icon {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  color: white;
+}
+
+.point {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 8px white;
+}
+
+.label {
+  color: white;
+  margin-top: 4px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 10px;
+}
+
+/* Positions */
+.from {
+  bottom: 12px;
+  left: 16px;
+}
+
+.via {
+  top: 63%;
+  right: 38%;
+  transform: translateY(-50%);
+}
+
+.to {
+  top: 7px;
+  right: 15px;
+}
+
+/* Colors */
+.from .pin {
+  background: #00ff99;
+  box-shadow: 0 0 6px #00ff99;
+}
+
+.via .pin {
+  background: #00aaff;
+  box-shadow: 0 0 6px #00aaff;
+}
+
+.to .pin {
+  background: #ff4d4d;
+  box-shadow: 0 0 6px #ff4d4d;
+}
+
+/* Route Curve */
+.route-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 310px;
+  height: 130px;
+  pointer-events: none;
+}
+
+.route-svg path {
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 5 5;
+}
+
+
     
 
 .is-android .android-text-20 {

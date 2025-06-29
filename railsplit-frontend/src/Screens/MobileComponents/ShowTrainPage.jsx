@@ -1,3 +1,4 @@
+import { key } from "fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -19,6 +20,9 @@ function ShowTrainPage() {
     const [directTrains, setDirectTrains] = useState([]);
     const [indirectTrains, setIndirectTrains] = useState([]);
     const [allStations, setAllStations] = useState([]);
+    const [popupCardData, setPopupCardData] = useState(null);
+
+
 
     // Extract data from react navigate state
     const { origin, destination, trainClass, date } = receivedData?.Data || {};
@@ -49,6 +53,16 @@ function ShowTrainPage() {
             alert(err);
         }
     }, []);
+
+    //Making bg unclickable and unscrollable when the popup is active
+    useEffect(() => {
+        if (popupCardData) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [popupCardData]);
+
 
     // Fetching data from server
     useEffect(() => {
@@ -136,7 +150,7 @@ function ShowTrainPage() {
                 };
 
             } catch (error) {
-                alert(`Error: ${error}.\nRefresh the page!`);
+                alert(`${error}.\nServer is unreachable!`);
             }
         };
 
@@ -227,9 +241,9 @@ function ShowTrainPage() {
                                 Object.entries(train.seat_availabilty).map(([seatClass, seats]) => (
                                     <div key={seatClass} className="bg-[#292B31] mt-2 h-fit min-w-[80px]  rounded-xl flex flex-col flex-shrink-0 px-3 py-0.5">
                                         <p className="text-[12px] font-bold">{seatClass}</p>
-                                        {seats.split(' ')[0] == "AVL" ?
+                                        {seats.split(' ')[0] === "AVL" ?
                                             <p className="text-green-500 text-[11px]">{seats}</p>
-                                            : seats.split(' ')[0] == "RAC" ?
+                                            : seats.split(' ')[0] === "RAC" ?
                                             <p className="text-blue-500 text-[11px]">{seats}</p>
                                             : <p className="text-#B91C1C-500 text-[11px]">{seats}</p>
                                         }
@@ -245,7 +259,7 @@ function ShowTrainPage() {
                     {indirectTrains.length !== 0 ? 
 
                     (indirectTrains.map((train, index) => (
-                        <div key={index} className="bg-[#1c1c1e] h-fit rounded-xl w-full mx-auto px-5 py-3 rounded-box">
+                        <div key={`${train.train1_number}-${train.train2_number}`} onClick={() => setPopupCardData(train)} className="bg-[#1c1c1e] h-fit rounded-xl w-full mx-auto px-5 py-3 rounded-box">
                             <div className="flex flex-row w-full justify-between">
                                 <div className="flex flex-col items-start">
                                     <h2 className="text-white text-2xl android-text-20">{train.train1_departure_time}</h2>
@@ -288,8 +302,175 @@ function ShowTrainPage() {
                         </div>
                     )))
 
-                    : <span className="loader"/>}
+                    : <div className="flex items-center justify-center w-full py-8">
+                        <span className="loader"></span>
+                    </div>}
                 </div>
+
+                {/*Popup card*/}
+
+                {popupCardData &&
+                (<div  className="fixed z-50 h-auto w-[45vh] bg-neutral-900 top-5/9 -translate-y-1/2 left-1/2 -translate-x-1/2 rounded-[2rem] shadow-2xl py-3 px-4 flex flex-col gap-5">
+                    <span className="text-center text-[16px]">-: Route details :-</span>
+                    <span onClick={() => setPopupCardData(null)} className="absolute right-4 underline text-gray-500">Close</span>
+
+                    {/* Train-1 details */}
+
+                    <div className="bg-[#1c1c1e] h-fit rounded-xl w-full mx-auto px-5 py-3 rounded-box">
+                            <div className="flex flex-row w-full justify-between">
+                                <div className="flex flex-col items-start">
+                                    <h2 className="text-white text-2xl android-text-20">{popupCardData.train1_departure_time}</h2>
+                                    <p className="text-gray-500 android-text-12">{popupCardData.origin}</p>
+                                    <p className="text-gray-500 android-text-12 font-bold text-[14px] mb-1">
+                                        {popupCardData.train1_departure_date}
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-1 flex-col items-center justify-center gap-4">
+                                    <div />
+                                    <div className="w-full flex items-center justify-center gap-[2px]">
+                                        {Array.from({ length: 15 }).map((_, i) => (
+                                            <div key={i} className="w-[8px] h-[2px] bg-[#3B3F48] rounded"></div>
+                                        ))}
+                                    </div>
+                                    <div className="text-center android-text-12">
+                                        <span className="inline-block px-2 py-1 rounded bg-[#23242a] text-green-400 text-xs font-medium">
+                                            Duration: {popupCardData.train1_duration}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col items-end">
+                                    <h2 className="text-white text-2xl text-right android-text-20">{popupCardData.train1_arrival_time}</h2>
+                                    <p className="text-gray-500 android-text-12">{popupCardData.intermediate}</p>
+                                    <p className="text-gray-500 android-text-12 text-[14px] font-bold text-right">{popupCardData.train1_arrival_date}</p>
+                                </div>
+                            </div>
+                            <div className="flex flex-row flex-nowrap gap-3 overflow-x-auto hide-scrollbar">
+                                {popupCardData.train1_seat_availability &&
+                                Object.entries(popupCardData.train1_seat_availability).map(([seatClass, seats]) => (
+                                    <div key={seatClass} className="bg-[#292B31] mt-2 h-fit min-w-[80px]  rounded-xl flex flex-col flex-shrink-0 px-3 py-0.5">
+                                        <p className="text-[12px] font-bold">{seatClass}</p>
+                                        {seats.split(' ')[0] == "AVL" ?
+                                            <p className="text-green-500 text-[11px]">{seats}</p>
+                                            : seats.split(' ')[0] == "RAC" ?
+                                            <p className="text-blue-500 text-[11px]">{seats}</p>
+                                            : <p className="text-#B91C1C-500 text-[11px]">{seats}</p>
+                                        }
+                                    </div>
+                                ))}
+                            </div>
+                    </div>
+                    
+                    
+                    {/* Train-2 details */}
+                    <div className="bg-[#1c1c1e] h-fit rounded-xl w-full mx-auto px-5 py-3 rounded-box">
+                            <div className="flex flex-row w-full justify-between">
+                                <div className="flex flex-col items-start">
+                                    <h2 className="text-white text-2xl android-text-20">{popupCardData.train2_departure_time}</h2>
+                                    <p className="text-gray-500 android-text-12">{popupCardData.intermediate}</p>
+                                    <p className="text-gray-500 android-text-12 font-bold text-[14px] mb-1">
+                                        {popupCardData.train2_departure_date}
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-1 flex-col items-center justify-center gap-4">
+                                    <div />
+                                    <div className="w-full flex items-center justify-center gap-[2px]">
+                                        {Array.from({ length: 15 }).map((_, i) => (
+                                            <div key={i} className="w-[8px] h-[2px] bg-[#3B3F48] rounded"></div>
+                                        ))}
+                                    </div>
+                                    <div className="text-center android-text-12">
+                                        <span className="inline-block px-2 py-1 rounded bg-[#23242a] text-green-400 text-xs font-medium">
+                                            Duration: {popupCardData.train2_duration}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col items-end">
+                                    <h2 className="text-white text-2xl text-right android-text-20">{popupCardData.train2_arrival_time}</h2>
+                                    <p className="text-gray-500 android-text-12">{popupCardData.destination}</p>
+                                    <p className="text-gray-500 android-text-12 text-[14px] font-bold text-right">{popupCardData.train2_arrival_date}</p>
+                                </div>
+                            </div>
+                        <div className="flex flex-row flex-nowrap gap-3 overflow-x-auto hide-scrollbar">
+                            {popupCardData.train2_seat_availability &&
+                                Object.entries(popupCardData.train2_seat_availability).map(([seatClass, seats]) => (
+                                    <div key={seatClass} className="bg-[#292B31] mt-2 h-fit min-w-[80px]  rounded-xl flex flex-col flex-shrink-0 px-3 py-0.5">
+                                        <p className="text-[12px] font-bold">{seatClass}</p>
+                                        {seats.split(' ')[0] == "AVL" ?
+                                            <p className="text-green-500 text-[11px]">{seats}</p>
+                                            : seats.split(' ')[0] == "RAC" ?
+                                            <p className="text-blue-500 text-[11px]">{seats}</p>
+                                            : <p className="text-#B91C1C-500 text-[11px]">{seats}</p>
+                                        }
+                                    </div>))
+                            }
+                        </div>
+                    </div>
+
+                    {/* Route card  */}
+                    <div className="w-full flex justify-center">
+                        <div class="glass-card font-bold">
+                        <div class="w-full flex justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path fill="none" stroke="#158df2" stroke-linecap="round" stroke-linejoin="round" d="M6.814 26.754s8.102 2.78 17.933-17.553h1.983V6.226h11.124v3.28h1.112s1.693-.782 3.327 8.663v10.89s-.136 4.854-2.702 5.206s-32.503 0-32.503 0s-2.595-3.022-.274-7.511" stroke-width="1"/><path fill="none" stroke="#158df2" stroke-linecap="round" stroke-linejoin="round" d="M21.362 21.03c-.744 0-1.347.672-1.347 1.5h0v3.329c0 .828.603 1.499 1.347 1.499s1.347-.671 1.347-1.499h0v-3.33c0-.827-.603-1.498-1.347-1.498m-4.16 3.581c-.64 0-1.158.578-1.159 1.29v2.41c.006.712.53 1.284 1.17 1.278c.631-.007 1.142-.575 1.148-1.278v-2.41c0-.712-.519-1.29-1.159-1.29q0 0 0 0m-3.793 2.382c-.546 0-.989.492-.989 1.1h0v1.619c-.005.607.433 1.105.98 1.11c.545.006.992-.481.998-1.09v-1.64c0-.607-.443-1.1-.99-1.1Zm-3.608 1.435c-.439 0-.794.396-.794.884h0v1.346c.004.488.364.88.803.874c.432-.005.782-.393.786-.874v-1.346c0-.488-.356-.884-.795-.884" stroke-width="1"/><ellipse cx="38.218" cy="26.072" fill="none" stroke="#158df2" stroke-linecap="round" stroke-linejoin="round" rx="2.232" ry="2.484" stroke-width="1"/><ellipse cx="28.67" cy="26.072" fill="none" stroke="#158df2" stroke-linecap="round" stroke-linejoin="round" rx="2.232" ry="2.484" stroke-width="1"/><path fill="none" stroke="#158df2" stroke-linecap="round" stroke-linejoin="round" d="M29.555 12.67c-1.664-.011-3.02 1.481-3.03 3.332s1.332 3.36 2.996 3.371h.034" stroke-width="1"/><path fill="none" stroke="#158df2" stroke-linecap="round" stroke-linejoin="round" d="M36.508 12.67c1.663-.011 3.02 1.481 3.03 3.332c.008 1.852-1.333 3.36-2.996 3.371h-6.988m.001-6.703h6.953M6.538 36.557c-.513-.064-.975.347-1.032.918a1 1 0 0 0 0 .23c0 1.265.437 1.12.437 1.12h1.12c11.948 0 17.112 2.949 17.112 2.949H42.5v-2.35h-1.917v-2.555h-5.158v2.45h-7.566v-2.763z" stroke-width="1"/></svg>
+                        </div>
+
+                        {/* <!-- From --> */}
+                        <div class="point from">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 16 16"><path fill="#05c860" fill-rule="evenodd" d="m7.539 14.841l.003.003l.002.002a.755.755 0 0 0 .912 0l.002-.002l.003-.003l.012-.009a6 6 0 0 0 .19-.153a15.6 15.6 0 0 0 2.046-2.082C11.81 11.235 13 9.255 13 7A5 5 0 0 0 3 7c0 2.255 1.19 4.235 2.292 5.597a15.6 15.6 0 0 0 2.046 2.082l.189.153zM8 8.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" clip-rule="evenodd"/></svg>
+                            {(() => {
+                                const originStation = allStations.find(st => st.Code === popupCardData.origin);
+                                return (
+                                    <div class="label">
+                                        {originStation
+                                            ? originStation.Name.charAt(0).toUpperCase() + originStation.Name.slice(1).toLowerCase()
+                                            : popupCardData.origin}
+                                    </div>
+                                );
+                            })()}
+                        </div>
+
+                        {/* <!-- Via --> */}
+                        <div class="point via">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 16 16"><path fill="#1c54ff" fill-rule="evenodd" d="m7.539 14.841l.003.003l.002.002a.755.755 0 0 0 .912 0l.002-.002l.003-.003l.012-.009a6 6 0 0 0 .19-.153a15.6 15.6 0 0 0 2.046-2.082C11.81 11.235 13 9.255 13 7A5 5 0 0 0 3 7c0 2.255 1.19 4.235 2.292 5.597a15.6 15.6 0 0 0 2.046 2.082l.189.153zM8 8.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" clip-rule="evenodd"/></svg>
+                            <div class="label">{(() => {
+                                const intermediateStation = allStations.find(st => st.Code === popupCardData.intermediate);
+                                return (
+                                    <div class="label">
+                                        {intermediateStation
+                                            ? intermediateStation.Name.charAt(0).toUpperCase() + intermediateStation.Name.slice(1).toLowerCase()
+                                            : popupCardData.intermediate}
+                                    </div>
+                                );
+                            })()}</div>
+                        </div>
+
+                        {/* <!-- To --> */}
+                        <div class="point to">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 16 16"><path fill="#bb4300" fill-rule="evenodd" d="m7.539 14.841l.003.003l.002.002a.755.755 0 0 0 .912 0l.002-.002l.003-.003l.012-.009a6 6 0 0 0 .19-.153a15.6 15.6 0 0 0 2.046-2.082C11.81 11.235 13 9.255 13 7A5 5 0 0 0 3 7c0 2.255 1.19 4.235 2.292 5.597a15.6 15.6 0 0 0 2.046 2.082l.189.153zM8 8.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3" clip-rule="evenodd"/></svg>
+                            <div class="label">{(() => {
+                                const destinationStation = allStations.find(st => st.Code === popupCardData.destination);
+                                return (
+                                    <div class="label">
+                                        {destinationStation
+                                            ? destinationStation.Name.charAt(0).toUpperCase() + destinationStation.Name.slice(1).toLowerCase()
+                                            : popupCardData.destination}
+                                    </div>
+                                );
+                            })()}</div>
+                        </div>
+
+                        {/* <!-- SVG Curved Line --> */}
+                        <svg class="route-svg">
+                            <path d="M 33 98 C 240 138 145 32 280 40"stroke="#aaa" stroke-width="2" fill="none" stroke-dasharray="6,6"/>
+                        </svg>
+                        </div>
+
+                    </div>
+                </div>
+                )}
             </div>
         </>
     );
