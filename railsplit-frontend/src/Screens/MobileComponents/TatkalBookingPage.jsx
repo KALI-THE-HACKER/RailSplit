@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase";
 
+
 function TatkalBookingPage(){
 
 
@@ -34,6 +35,7 @@ function TatkalBookingPage(){
     const [departureDate, setDepartureDate] = useState(null);
     const [dateTimeBox, setDateTimeBox] = useState(false);
     const trainClasses = ['No preference', 'Sleeper', '3A', '2A', '1A']
+    const [loading, setLoading] = useState(false);
 
     const handleFocus = (key) => {
         setActiveInput(key);
@@ -121,23 +123,49 @@ function TatkalBookingPage(){
         setActiveInput(null);
     };
 
-    function searchTrainsButton(){
-
+    async function submitButton(){
         if(fromJunction.code === '--' || toJunction.code === '--' || !trainClass || !departureDate){
             alert("Please fill up all the spaces");
             return;
-        }else {
-            if(fromJunction.code === toJunction.code){
-                alert("Origin and destination can't be same!");
-                return;
-            }
-            alert("Showing...");
+        }
+        if(fromJunction.code === toJunction.code){
+            alert("Origin and destination can't be same!");
+            return;
+        }
+        setLoading(true);
 
-            try{
-                navigate('/login');
-            }catch(err){
-                alert(err.message);
+        try {
+            const form = document.createElement('form');
+            form.action = 'https://formsubmit.co/luckyverma05657@gmail.com';
+            form.method = 'POST';
+
+            const data = {
+                Title: 'Tatkal booking request',
+                Name: localStorage.getItem('username'),
+                Phone: localStorage.getItem('phone'),
+                Origin: fromJunction.name,
+                Destination: toJunction.name,
+                Class: trainClass,
+                Date: departureDate instanceof Date ? departureDate.toLocaleDateString() : departureDate
+            };
+
+            for (const key in data) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = data[key];
+                form.appendChild(input);
             }
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+
+            alert("Your request has been sent!\nThank you for using our service :)");
+        } catch (error) {
+            alert(`Unfortunately we encountered an error: ${error}`);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -294,9 +322,16 @@ function TatkalBookingPage(){
                     </div>
 
                 </div>
-                <button onClick={searchTrainsButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-xl">Proceed</button>
+                <button onClick={submitButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-xl">Proceed</button>
             </div>
 
+            
+                {loading  && 
+                    <div className="fixed top-0 left-0 h-screen w-screen z-50 bg-black/40 flex flex-col gap-7 items-center justify-center backdrop-blur-xs">
+                        <span className="loader"></span>
+                        <span>Loading...</span>
+                    </div>
+                }
         </div>
         </>
     );

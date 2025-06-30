@@ -13,22 +13,39 @@ import ShowTrainPage from "./MobileComponents/ShowTrainPage";
 import TatkalBookingPage from "./MobileComponents/TatkalBookingPage";
 
 function MobileView(){
-    const [loggedIn, setLoggedIn] = useState(() => {
-        const storedUsername = localStorage.getItem("username");
-        return !!storedUsername;
-    });
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [username, setUsername] = useState("");
+    const [loading, setLoading] = useState(true);
     const location = useLocation();
-    const [username, setUsername] = useState(() => {
-        return localStorage.getItem("username") || "";
-    });
+
+    // Auto scroll to top (Fix: React auto-focus issue)
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }, [location.pathname]); 
 
     useEffect(() => {
         setPersistence(auth, browserLocalPersistence).catch((err) =>
             console.error("Auth persistence error:", err)
         );
+
+        // Listen to Firebase Auth state changes
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                setLoggedIn(true);
+                setUsername(user.displayName || localStorage.getItem("username") || "");
+            } else {
+                setLoggedIn(false);
+                setUsername("");
+            }
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
     }, []);
 
-    
+    if (loading) {
+        return <div className="bg-black h-screen w-screen flex flex-col gap-7 items-center justify-center text-white"><span className="loader"></span> <span>Loading...</span></div>;
+    }
 
     return(
         <>

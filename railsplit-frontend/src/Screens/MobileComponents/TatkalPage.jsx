@@ -142,21 +142,14 @@ function TatkalPage(){
 
     };
 
-    async function saveNumberToDb() {
-        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
-
-        if(userDoc.exists()){
-            return;
-        };
-
+    async function saveNumberToDb(phoneNumber) {
         try {
             const userEmail = localStorage.getItem("email");
             await setDoc(doc(db, "users", auth.currentUser.uid), {
-                    phone : "+91"+phone,
-                    email : userEmail,
-                    phoneVerifiedAt : new Date(),
-                });
-        
+                phone: phoneNumber,
+                email: userEmail,
+                phoneVerifiedAt: new Date(),
+            }, { merge: true });
         } catch(err) {
             alert("Error : " + err.message);
         }
@@ -169,28 +162,44 @@ function TatkalPage(){
         }
         try {
             setVerifyingOtp(true);
-            const emailUser = auth.currentUser;
 
+            // Confirm the OTP and get the phone credential
             const result = await confirmation.confirm(otp);
             const phoneCredential = PhoneAuthProvider.credential(confirmation.verificationId, otp);
 
+            // Ensure the user is signed in with email before linking
+            const emailUser = auth.currentUser;
+            if (!emailUser) {
+                alert("You must be logged in with your email to link your phone.");
+                setVerifyingOtp(false);
+                return;
+            }
+
+            // Link the phone credential to the current user
             await linkWithCredential(emailUser, phoneCredential);
             await auth.updateCurrentUser(emailUser);
-            
-            await saveNumberToDb();
+
+            // Save/merge the phone number in Firestore
+            await saveNumberToDb("+91" + phone);
+            localStorage.setItem("phone", phone);
 
             alert("Phone verified and linked!");
             navigate('/tatkalbooking');
         } catch (err) {
-            if (err.code === 'auth/invalid-verification-code') {
+            if (err.code === 'auth/credential-already-in-use' || err.code === 'auth/account-exists-with-different-credential') {
+                alert("This phone number is already linked to another account. Please login with the correct account.");
+            } else if (err.code === 'auth/invalid-verification-code') {
                 alert("Incorrect OTP. Please try again.");
+            } else if (err.code === 'auth/provider-already-linked') {  
+                localStorage.setItem("phone", phone);
+                alert("You can proceed, you're linked already!");
+                navigate('/tatkalbooking');
             } else {
                 alert(err.message);
             }
         } finally {
             setVerifyingOtp(false);
         }
-
     };
   
 

@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../../firebase";
 
 function Homepage(props){
     const { username } = props;
     const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            navigate('/');
+        } catch (err) {
+            alert("Logout failed: " + err.message);
+        }
+    };
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return(
         <>
-            <div className="h-screen w-screen bg-black py-7 px-5 text-white">
+            <div className="h-screen min-h-screen w-screen bg-black py-7 mb-10 px-5 text-white">
                 <h1 className="text-3xl title font-semibold mx-2 mb-7">Hello {username} 👋</h1>
                 <p className="text-gray-400 my-3 mx-4">Railsplit Services</p>
 
@@ -60,6 +75,17 @@ function Homepage(props){
                     </div>
                 </div>
 
+                {/* Logout Button at the bottom */}
+                <div className="w-full flex justify-center mt-10">
+                    <button
+                        onClick={handleLogout}
+                        className="bg-[#23252b] hover:bg-[#2d3038] text-white px-7 py-3 rounded-2xl shadow-lg text-lg font-semibold transition-all duration-200 border border-[#333] flex items-center gap-2"
+                        style={{letterSpacing: '0.03em'}}
+                    >
+                        <i className="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </button>
+                </div>
             </div>
         </>
     );
