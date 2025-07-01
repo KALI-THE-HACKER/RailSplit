@@ -43,14 +43,14 @@ function Homepage(props){
                         </div>
                     </div>
                     <div className="flex flex-row gap-4">
-                        <div className="bg-[#1D1F24] h-[25vh] w-[45vw] rounded-[1.7rem] px-3 py-3">
+                        <div onClick={() => {navigate('/pnrstatus')}} className="bg-[#1D1F24] h-[25vh] w-[45vw] rounded-[1.7rem] px-3 py-3">
                             <div className="bg-[#28292E] h-[7vh] w-[14vw] rounded-xl flex items-center justify-center">
                                 <i class="fa-solid fa-receipt text-white text-4xl"></i>
                             </div>
                             <h2 className="mt-2 text-xl font-semibold">PNR Status</h2>
                             <p className="text-xs my-1">Check your ticket & seat status instantly</p>
                         </div>
-                        <div className="bg-[#1D1F24] h-[25vh] w-[45vw] rounded-[1.7rem] px-3 py-3">
+                        <div onClick={() => {navigate('/livetrainstatus')}} className="bg-[#1D1F24] h-[25vh] w-[45vw] rounded-[1.7rem] px-3 py-3">
                             <div className="bg-[#28292E] h-[7vh] w-[14vw] rounded-xl flex items-center justify-center">
                                 <i class="fa-solid fa-map-marker-alt text-white text-4xl"></i>
                             </div>
@@ -64,11 +64,11 @@ function Homepage(props){
 
                 <div className="relative flex flex-col gap-4">
                     <div className="flex flex-row gap-4">
-                        <div className="bg-[#1D1F24] h-auto w-[45vw] rounded-[1.3rem] px-3 py-2">
+                        <div onClick={() => {navigate('/contactus')}} className="bg-[#1D1F24] h-auto w-[45vw] rounded-[1.3rem] px-3 py-2">
                             <h2 className="text-xl">Contact us</h2>
                             <p className="text-xs mt-1">Have questions or need help?</p>
                         </div>
-                        <div className="bg-[#1D1F24] h-auto w-[45vw] rounded-[1.3rem] px-3 py-2">
+                        <div onClick={() => {navigate('/aboutus')}} className="bg-[#1D1F24] h-auto w-[45vw] rounded-[1.3rem] px-3 py-2">
                             <h2 className="text-xl">About us</h2>
                             <p className="text-xs mt-1">Know how Railsplit helps simplify train travel</p>
                         </div>

@@ -11,6 +11,10 @@ import SearchTrainPage from './MobileComponents/SearchTrainPage';
 import TatkalPage from './MobileComponents/TatkalPage';
 import ShowTrainPage from "./MobileComponents/ShowTrainPage";
 import TatkalBookingPage from "./MobileComponents/TatkalBookingPage";
+import PnrStatusPage from "./MobileComponents/PnrStatusPage";
+import LiveTrainStatusPage from "./MobileComponents/LiveTrainStatusPage";
+import ContactUsPage from "./MobileComponents/ContactUsPage";
+import AboutUsPage from "./MobileComponents/AboutUsPage";
 
 function MobileView(){
     const [loggedIn, setLoggedIn] = useState(false);
@@ -69,6 +73,24 @@ function MobileView(){
                 </ProtectedRoute>} />
             <Route path="/tatkalbooking" element={<ProtectedRoute loggedIn={loggedIn}>
                 <TatkalBookingPage />
+                </ProtectedRoute>} />
+            <Route path="/pnrstatus" element={<ProtectedRoute loggedIn={loggedIn}>
+                <PnrStatusPage />
+                </ProtectedRoute>} />
+            <Route path="/livetrainstatus" element={<ProtectedRoute loggedIn={loggedIn}>
+                <LiveTrainStatusPage />
+                </ProtectedRoute>} />
+            <Route path="/livetrainstatus" element={<ProtectedRoute loggedIn={loggedIn}>
+                <LiveTrainStatusPage />
+                </ProtectedRoute>} />
+            <Route path="/livetrainstatus" element={<ProtectedRoute loggedIn={loggedIn}>
+                <LiveTrainStatusPage />
+                </ProtectedRoute>} />
+            <Route path="/contactus" element={<ProtectedRoute loggedIn={loggedIn}>
+                <ContactUsPage />
+                </ProtectedRoute>} />
+            <Route path="/aboutus" element={<ProtectedRoute loggedIn={loggedIn}>
+                <AboutUsPage />
                 </ProtectedRoute>} />
         </Routes>
         </>
