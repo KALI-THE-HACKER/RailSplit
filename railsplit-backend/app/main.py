@@ -1,3 +1,4 @@
+import logging
 import requests
 from datetime import datetime, timedelta
 import time
@@ -113,6 +114,17 @@ intermediates = []
 
 #Algorithm to find the cartesian coordinates of source and destination
 def st_code_to_cartesian(source, destination):
+
+    #Few station codes were changed in 2017 and openstreetmap is official so it uses updated names. Frontend and other function are based on old codes, that's why to handle backend, replacing old with new where needed
+    updated_station_codes = {
+        "CSTM": "CSMT",
+        "SBC": "KSR",
+        "MAS": "MBBR",
+        "BCT": "MMCT"
+    }
+
+    source = updated_station_codes.get(source, source)
+    destination = updated_station_codes.get(destination, destination)
     
     #Station_code to Coordinates to Cartesian
     base_url = f"https://nominatim.openstreetmap.org/search"
@@ -233,7 +245,11 @@ async def web_scrapping(from_station, to_station, date):
                         availability = (await availability_el.inner_text()).strip() if availability_el else ""
 
                         if class_name and availability:
-                            seat_availability_data[class_name] = availability
+                            if availability.startswith("AVL") or availability.startswith("RAC"):
+                                seat_availability_data[class_name] = availability
+
+                    if not seat_availability_data:
+                        continue
 
                     train_details = await row.query_selector("div.orgn-dstn")
                     if train_details:
