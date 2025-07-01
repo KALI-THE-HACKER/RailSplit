@@ -5,7 +5,7 @@ function AboutUsPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="relative min-h-screen h-screen bg-gradient-to-br from-black via-[#1D1F24] to-[#23252b] flex flex-col items-center justify-center px-5 py-10 overflow-hidden">
+        <div className="relative min-h-screen bg-gradient-to-br from-black via-[#1D1F24] to-[#23252b] flex flex-col items-center justify-center px-5 py-10 overflow-y-auto overflow-x-hidden">
             {/* Header */}
             <div className="fixed flex flex-row items-center w-full top-5 left-0 z-20">
                 <i onClick={() => navigate('/')} className="fa-solid fa-angle-left text-[#767676] text-2xl ml-1 mt-2" />
@@ -23,8 +23,7 @@ function AboutUsPage() {
 
             {/* Main Card */}
             <div
-                className="relative z-10 bg-[#23252b]/80 rounded-3xl shadow-2xl p-8 w-[90vw] max-w-xl flex flex-col items-center backdrop-blur-xl border border-[#333] animate-fadein"
-                style={{ marginTop: "80px" }} // Add margin to push below header
+                className="relative z-10 bg-[#23252b]/80 rounded-3xl shadow-2xl p-8 w-[90vw] max-w-xl flex flex-col items-center backdrop-blur-xl border border-[#333] animate-fadein top-10 h-fit"
             >
                 <div className="flex flex-col items-center mb-6">
                     <div className="bg-gradient-to-tr from-blue-500 via-green-400 to-purple-600 p-1 rounded-full mb-4 animate-spin-slow">
@@ -36,32 +35,39 @@ function AboutUsPage() {
                         Welcome to <span className="bg-gradient-to-r from-blue-400 via-green-400 to-purple-500 bg-clip-text text-transparent">Railsplit</span>
                     </h1>
                     <p className="text-lg text-gray-300 text-center max-w-md animate-fadein-slow">
-                        Your one-stop solution for all train travel needs. We blend technology, design, and a passion for travel to make your journey seamless and delightful.
+                        <strong>Your smart companion for seamless train travel.</strong><br/>
+
+                        Long routes often mean unconfirmed tickets — even if booked weeks in advance. <strong>Railsplit</strong> solves this by finding alternative split routes with higher chances of seat availability, helping you skip the hassle of waitlists and uncertainty.
+
+                        Prefer a single route? We’ve got you covered. Our <strong>Tatkal booking service, powered by trusted agents</strong>, helps you secure last-minute confirmed seats quickly and reliably.<br/>
+
+                        <span className="font-extrabold">Railsplit — Making every journey smooth, simple, and stress-free.</span>
                     </p>
                 </div>
                 <div className="w-full flex flex-col gap-6 mt-4">
-                    <div className="flex items-center gap-4 animate-fadein-delay">
-                        <i className="fa-solid fa-bolt text-yellow-400 text-2xl"></i>
-                        <span className="text-white text-lg font-semibold">Tatkal Booking Assistance</span>
-                    </div>
+                    
                     <div className="flex items-center gap-4 animate-fadein-delay2">
                         <i className="fa-solid fa-train text-blue-400 text-2xl"></i>
-                        <span className="text-white text-lg font-semibold">Indirect Train Route Finder</span>
+                        <span className="text-white text-lg font-semibold">Smart Split Journey Finder</span>
+                    </div>
+                    <div className="flex items-center gap-4 animate-fadein-delay">
+                        <i className="fa-solid fa-bolt text-yellow-400 text-2xl"></i>
+                        <span className="text-white text-lg font-semibold">Fast & Reliable Tatkal Booking</span>
                     </div>
                     <div className="flex items-center gap-4 animate-fadein-delay3">
                         <i className="fa-solid fa-receipt text-green-400 text-2xl"></i>
-                        <span className="text-white text-lg font-semibold">PNR & Live Status</span>
+                        <span className="text-white text-lg font-semibold">PNR Status & Live Train Updates</span>
                     </div>
                     <div className="flex items-center gap-4 animate-fadein-delay4">
                         <i className="fa-solid fa-users text-purple-400 text-2xl"></i>
-                        <span className="text-white text-lg font-semibold">Friendly Support</span>
+                        <span className="text-white text-lg font-semibold">Friendly & Dedicated Support</span>
                     </div>
                 </div>
                 <div className="mt-8 text-center animate-fadein-slow">
                     <h2 className="text-2xl font-bold text-blue-400 mb-2">Our Mission</h2>
                     <p className="text-gray-300 text-base">
-                        To empower every traveler with the smartest, fastest, and most reliable train booking experience in India.<br />
-                        <span className="text-green-400 font-semibold">We believe in journeys, not just destinations.</span>
+                        To transform train travel by offering the smartest, fastest, and most dependable ticket booking experience in India.<br />
+                        <span className="text-green-400 font-semibold">Because we believe that every journey should be simple, smooth, and worry-free.</span>
                     </p>
                 </div>
                 <div className="mt-8 flex flex-col items-center animate-fadein-delay4">
@@ -69,6 +75,7 @@ function AboutUsPage() {
                     <a href="mailto:support@luckylinux.xyz" className="text-blue-400 underline hover:text-blue-300 transition">Contact us</a>
                 </div>
             </div>
+
 
             {/* Animations */}
             <style>{`
