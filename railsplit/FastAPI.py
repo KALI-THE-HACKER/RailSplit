@@ -60,7 +60,7 @@ async def start_stream(request: Request, x_api_key:str = Header(...)):
 
     logging.info(f"Request from IP : {ip}")
 
-    if x_api_key != "linuxapi5657":
+    if x_api_key != "bGludXhhcGk1NjU3":
         logging.error(f"Invalid API Key, user IP: {ip}")
         raise HTTPException(status_code=401, detail="Invalid API key!")
     
@@ -236,9 +236,9 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                         "train2_departure_time": train2_departure.strftime("%H:%M"),
                                         "train2_arrival_date": train2_arrival.strftime("%a, %d %B"),
                                         "train2_arrival_time": train2_arrival.strftime("%H:%M"),
-                                        "train1_number": train1['train-number'],
+                                        "train1_number": train1['train_number'],
                                         "train1_name": train1['train_name'],
-                                        "train2_number": train2['train-number'],
+                                        "train2_number": train2['train_number'],
                                         "train2_name": train2['train_name'],
                                         "train1_seat_availability": train1['seat_availabilty'],
                                         "train2_seat_availability": train2['seat_availabilty'],
