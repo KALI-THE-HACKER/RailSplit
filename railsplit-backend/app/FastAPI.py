@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException, Header, Query
 from fastapi.responses import JSONResponse, StreamingResponse
-from main import st_code_to_cartesian, algorithm_one, web_scrapping
+from main import st_code_to_cartesian, algorithm_one, web_scrapping, pnr_scraping
 import asyncio
 import redis, json
 from datetime import datetime, timedelta
@@ -317,3 +317,14 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
     except Exception as e:
         logging.error(f"Non-HTTPException error occured: {e}")
         raise HTTPException(status_code=500, detail=f"An error occured: {str(e)}")
+    
+
+
+
+@app.get('/pnr-status/{pnr}/apikey/{apikey}')
+async def pnr_status(pnr, apikey):
+    if apikey != "bGludXhhcGk1NjU3":
+        return {"detail": "Na kr munna na krr... Invalid API Key!"}
+    
+    pnr_status_data = await pnr_scraping(pnr)
+    return pnr_status_data
