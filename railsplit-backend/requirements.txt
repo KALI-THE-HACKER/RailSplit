@@ -1,6 +1,0 @@
-fastapi
-playwright
-redis
-uvicorn
-gunicorn
-requests
