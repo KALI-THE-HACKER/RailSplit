@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3108:3108"
+    depends_on:
+      - redis
+    volumes:
+      - ./logs:/logs
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

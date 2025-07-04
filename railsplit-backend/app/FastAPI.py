@@ -15,12 +15,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
-r = redis.Redis(host="127.0.0.1", port=6379, db=0)
+r = redis.Redis(host="redis", port=6379, db=0)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Or specify frontend's URL
+    allow_origins=["https://railsplit.luckylinux.xyz"],  # Or specify frontend's URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,7 +30,7 @@ coordinates = []
 intermediates = []
 
 logging.basicConfig(
-    filename='logfile.log',  # change name as needed
+    filename='/logs/logfile.log',  # change name as needed
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -128,9 +128,7 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
             start_time = time.time()
 
             try:
-                yield f"data: {json.dumps({
-                    'status': 'Connection established!', 
-                    'type': '#15803D'})}\n\n"
+                yield f"data: {json.dumps({'status': 'Connection established!', 'type': '#15803D'})}\n\n"
                 
                 # Check if the result is already cached
                 cached_result = r.get(f"{source}-{destination}-{date}")
@@ -248,10 +246,9 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                     #Upadate available_trains list
                                     available_trains.append(intermediate_result)
                                     # logging.info(f"Appended intermediate_result for {i} to available_trains. Total now: {len(available_trains)}")
-
                                 else:
-                                    yield f"data: {json.dumps({'status': f'Found nothing for {i}\n searching others...', 'type': '#B91C1C'})}\n\n"
-
+                                    message = f'Found nothing for {i}\n searching others...'
+                                    yield f"data: {json.dumps({'status': message, 'type': '#B91C1C'})}\n\n"
                                     # logging.info(f"No valid connecting trains for intermediate: {i} after time filtering")
 
                         # Send the updated results
