@@ -33,7 +33,6 @@ function TatkalBookingPage(){
     const [classDropdown, setClassDropdown] = useState(false);
     const [trainClass, setTrainClass] = useState('');
     const [departureDate, setDepartureDate] = useState(null);
-    const [dateTimeBox, setDateTimeBox] = useState(false);
     const trainClasses = ['No preference', 'Sleeper', '3A', '2A', '1A']
     const [loading, setLoading] = useState(false);
 
@@ -143,6 +142,7 @@ function TatkalBookingPage(){
                 Title: 'Tatkal booking request',
                 Name: localStorage.getItem('username'),
                 Phone: localStorage.getItem('phone'),
+                Email: localStorage.getItem('email'),
                 Origin: fromJunction.name,
                 Destination: toJunction.name,
                 Class: trainClass,
@@ -322,7 +322,7 @@ function TatkalBookingPage(){
                     </div>
 
                 </div>
-                <button onClick={submitButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-xl">Proceed</button>
+                <button onClick={submitButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-xl">Submit</button>
             </div>
 
             

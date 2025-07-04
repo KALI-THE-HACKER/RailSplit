@@ -479,7 +479,7 @@ function ShowTrainPage() {
 
                         {/* <!-- SVG Curved Line --> */}
                         <svg class="route-svg">
-                            <path d="M 33 98 C 240 138 145 32 280 40"stroke="#aaa" stroke-width="2" fill="none" stroke-dasharray="6,6"/>
+                            <path d="M 40 98 C 240 138 145 32 260 40"stroke="#aaa" stroke-width="2" fill="none" stroke-dasharray="6,6"/>
                         </svg>
                         </div>
 
