@@ -325,9 +325,18 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
 
 
 @app.get('/pnr-status/{pnr}/apikey/{apikey}')
-async def pnr_status(pnr, apikey):
+async def pnr_status(pnr, apikey, request: Request, user_id: str = Query(...)):
+
+    x_forwarded_for = request.headers.get('x-forwarded-for')
+    ip = x_forwarded_for.split(',')[0] if x_forwarded_for else request.client.host
+
+    logging.info(f"PNR Status Request from IP : {ip}")
     if apikey != "bGludXhhcGk1NjU3":
-        return {"detail": "Na kr munna na krr... Invalid API Key!"}
+        logging.error(f"{ip} : Inalid API Key!")
+        return HTTPException(status_code=401, detail="Mat kr lala mt krr.. Invalid API Key!")
     
     pnr_status_data = await pnr_scraping(pnr)
+    
+    if pnr_status_data == "{'detail': 'PNR is Invalid!'}":
+        return HTTPException(status_code=422, detail="Galat PNR hai bhai.. PNR is either incorrect or expired!")
     return pnr_status_data
