@@ -1,5 +1,6 @@
 import logging
 import requests
+from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import time
 import asyncio
@@ -291,3 +292,80 @@ async def web_scrapping(from_station, to_station, date):
             # Close the browser
             await browser.close()
 
+
+async def pnr_scraping(pnr):
+
+    url = f'https://www.railyatri.in/pnr-status/{pnr}'
+    response = requests.get(url)
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    pnr_verify_div = soup.find('div', id='status_not_fetched')
+
+    if pnr_verify_div:
+        return {"detail": "PNR is Invalid!"}
+    
+
+    train_name = soup.select_one('.train-info span[style]').get_text(strip=True)
+
+    # From Station
+    from_station = soup.select_one('.train-route .col-xs-4:nth-child(1) .pnr-bold-txt').get_text(strip=True)
+    from_station = from_station.split('|')
+
+    # To Station
+    to_station = soup.select_one('.train-route .col-xs-4:nth-child(2) .pnr-bold-txt').get_text(strip=True)
+    to_station = to_station.split('|')
+
+    # Departure Time
+    departure_time = soup.select_one('.train-route .col-xs-4:nth-child(1) p:nth-of-type(3)').get_text(strip=True)
+
+    # Arrival Time
+    arrival_time = soup.select_one('.train-route .col-xs-4:nth-child(2) p:nth-of-type(3)').get_text(strip=True)
+
+    # Journey Time
+    journey_hours = soup.select_one('.train-route .col-xs-4:nth-child(3) span:nth-of-type(1)').get_text(strip=True)
+    journey_minutes = soup.select_one('.train-route .col-xs-4:nth-child(3) span:nth-of-type(2)').get_text(strip=True)
+
+    # Boarding Day
+    boarding_day = soup.select_one('.boarding-detls .col-xs-4:nth-child(1) .pnr-bold-txt').get_text(strip=True)
+
+    # Class
+    train_class = soup.select_one('.boarding-detls .col-xs-4:nth-child(2) .pnr-bold-txt').get_text(strip=True)
+
+    # Platform
+    platform = soup.select_one('.boarding-detls .col-xs-4:nth-child(3) .pnr-bold-txt').get_text(strip=True)
+
+    pnr_status = []
+    # Booking & Current Status + Coach/Berth (Multiple)
+    status_blocks = soup.select('.PNR_status')
+    for idx, block in enumerate(status_blocks, start=1):
+        status = block.select('p.statusType')
+        booking_status = status[0].get_text(strip=True)
+        current_status = status[1].get_text(strip=True)
+        coach_berth = status[2].get_text(strip=True)
+
+        pnr_status.append({
+            "passenger": idx,
+            "booking_status": booking_status,
+            "current_status": current_status,
+            "coach": coach_berth
+        })
+
+
+    pnr_data = {
+        "pnr": pnr,
+        "train_name": train_name,
+        "from_st_name": from_station[0],
+        "from_st_code": from_station[1],
+        "to_st_name": to_station[0],
+        "to_st_code": to_station[1],
+        "departure_time": departure_time,
+        "arrival_time": arrival_time,
+        "journey_time": f"{journey_hours} {journey_minutes}",
+        "boarding_day": boarding_day,
+        "class": train_class,
+        "platform": platform,
+        "status": pnr_status
+    }
+
+    return pnr_data

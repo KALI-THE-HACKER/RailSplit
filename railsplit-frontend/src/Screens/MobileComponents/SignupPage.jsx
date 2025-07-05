@@ -23,25 +23,31 @@ function SignupPage() {
     async function signup(){
         setError("");
         if (!username || !email || !password) {
-        setError("Please fill all fields!");
-        return;
+            setError("Please fill all fields!");
+            return;
         }
         setLoading(true);
         try {
             const emailUserCredential =  await createUserWithEmailAndPassword(auth, email, password);
-
             const user = emailUserCredential.user;
-            
+
+            // Update profile with username
             await updateProfile(user, { displayName: username });
 
+            // Save user info in Firestore
             await setDoc(doc(db, "users", user.uid), {
-            email: user.email,
-            username: username,
+                email: user.email,
+                username: username,
             });
+
+            // Set username/email in localStorage
             localStorage.setItem("username", username);
             localStorage.setItem("email", email);
+
             alert("Account created successfuly!");
-            navigate('/', { state:{ username }});
+
+            // Force reload to ensure auth state and displayName are synced everywhere
+            window.location.replace("/");
         } catch(err) {
             setError(err.message);
         }
