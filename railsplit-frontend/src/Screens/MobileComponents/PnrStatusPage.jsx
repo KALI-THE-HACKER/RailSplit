@@ -35,13 +35,17 @@ function PnrStatusPage() {
         }
         setLoading(true);
         try {
-            const response = await fetch(`http://192.168.29.62:8000/pnr-status/8234569935/apikey/bGludXhhcGk1NjU3`);
+            const response = await fetch(`http://192.168.29.62:8000/pnr-status/${pnr}/apikey/${apikey}`);
 
-            if(!response.ok){
+            if(response.status == 422) {
+                alert("Invalid PNR number. Please check and try again!");
+                return;
+            }else if(!response.ok){
                 throw new Error(`Response status: ${response.status}`);
             }
 
             const json = await response.json();
+            
 
             setPnrData(json);
 

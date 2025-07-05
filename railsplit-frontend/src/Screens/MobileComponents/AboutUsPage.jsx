@@ -72,7 +72,7 @@ function AboutUsPage() {
                 </div>
                 <div className="mt-8 flex flex-col items-center animate-fadein-delay4">
                     <span className="text-gray-400 text-sm mb-2">Made with <span className="text-red-400">♥</span> by Lucky Linux</span>
-                    <a href="mailto:support@luckylinux.xyz" className="text-blue-400 underline hover:text-blue-300 transition">Contact us</a>
+                    <a onClick={() => navigate('/contactus')} className="text-blue-400 underline hover:text-blue-300 transition">Contact us</a>
                 </div>
             </div>
 
