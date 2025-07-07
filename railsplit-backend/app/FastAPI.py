@@ -239,7 +239,9 @@ async def fastapiapp(request: Request, user_id: str = Query(...)):
                                         "train1_seat_availability": train1['seat_availabilty'],
                                         "train2_seat_availability": train2['seat_availabilty'],
                                         "layover": layover,
-                                        "duration": duration
+                                        "duration": duration,
+                                        "train1_duration": train1['duration'],
+                                        "train2_duration": train2['duration']
                                     }
                                     #Upadate available_trains list
                                     available_trains.append(intermediate_result)
