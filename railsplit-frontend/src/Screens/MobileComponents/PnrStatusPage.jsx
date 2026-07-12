@@ -35,7 +35,8 @@ function PnrStatusPage() {
         }
         setLoading(true);
         try {
-            const response = await fetch(`http://192.168.29.62:8000/pnr-status/${pnr}/apikey/${apikey}`);
+            const backendEndpoint = import.meta.env.VITE_RAILSPLIT_BACKEND_ENDPOINT || "http://192.168.29.62:8000";
+            const response = await fetch(`${backendEndpoint}/pnr-status/${pnr}/apikey/${apikey}`);
 
             if(response.status == 422) {
                 alert("Invalid PNR number. Please check and try again!");

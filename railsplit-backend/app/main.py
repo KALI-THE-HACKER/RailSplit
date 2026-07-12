@@ -5,6 +5,32 @@ from datetime import datetime, timedelta
 import time
 import asyncio
 from playwright.async_api import async_playwright
+import os
+
+def manual_load_dotenv():
+    paths_to_try = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"),
+        os.path.join(os.getcwd(), ".env"),
+        os.path.join(os.getcwd(), "railsplit-backend", ".env")
+    ]
+    for path in paths_to_try:
+        if os.path.exists(path):
+            try:
+                with open(path, "r") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line or line.startswith("#"):
+                            continue
+                        if "=" in line:
+                            key, val = line.split("=", 1)
+                            val = val.strip().strip("'").strip('"')
+                            os.environ[key.strip()] = val
+                break
+            except Exception:
+                pass
+
+manual_load_dotenv()
 
 #Global dictionaries, lists and all
 top100_cartesian = {
@@ -197,8 +223,149 @@ def algorithm_one(source, destination, coordinates):
 
         return intermediates
 
+# Helper function to fetch trains from API synchronously
+def fetch_trains_api_sync(from_station, to_station, date_str):
+    """
+    Fetches train data from confirmtkt API synchronously.
+    date_str is in format 'DDMMYYYY' (e.g. '13042026')
+    """
+    try:
+        # Convert date_str from "DDMMYYYY" to "DD-MM-YYYY"
+        dt = datetime.strptime(date_str, "%d%m%Y")
+        journey_date = dt.strftime("%d-%m-%Y")
+    except Exception as e:
+        logging.error(f"Error parsing date {date_str} in API mode: {e}")
+        return None
+
+    api_endpoint = os.getenv("TRAIN_API_ENDPOINT")
+    
+    params = {
+        "sourceStationCode": from_station,
+        "destinationStationCode": to_station,
+        "dateOfJourney": journey_date,
+        "addAvailabilityCache": "true",
+        "sortBy": "DEFAULT",
+        "enableNearby": "true"
+    }
+    
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json"
+    }
+
+    try:
+        response = requests.get(api_endpoint, params=params, headers=headers, timeout=15)
+        if response.status_code != 200:
+            logging.error(f"API request failed with status code {response.status_code}")
+            return None
+        
+        resp_json = response.json()
+        data = resp_json.get("data")
+        if not data:
+            return None
+        
+        train_list = data.get("trainList") or []
+        temp_trains_data = []
+        
+        for train in train_list:
+            train_number = train.get("trainNumber", "")
+            train_name = train.get("trainName", "")
+            from_st = train.get("fromStnCode", "")
+            to_st = train.get("toStnCode", "")
+            
+            # Extract duration in minutes, convert to "Xh Ym" string
+            duration_mins = train.get("duration", 0)
+            hours = duration_mins // 60
+            mins = duration_mins % 60
+            duration_str = f"{hours}h {mins}m"
+            
+            # Format departure and arrival dates/times
+            dep_time_str = train.get("departureTime", "")
+            arr_time_str = train.get("arrivalTime", "")
+            
+            # Calculate departure/arrival datetimes using journey date
+            try:
+                dep_dt = datetime.strptime(f"{journey_date} {dep_time_str}", "%d-%m-%Y %H:%M")
+                arr_dt = dep_dt + timedelta(minutes=duration_mins)
+            except Exception as e:
+                dep_dt = dt
+                arr_dt = dt
+                
+            # Tuples in format: (time, day_of_week_comma, day, month_abbrev)
+            # e.g., ('04:00', 'Fri,', '17', 'Jul')
+            dep_tuple = (
+                dep_time_str,
+                dep_dt.strftime("%a,"),
+                str(dep_dt.day),
+                dep_dt.strftime("%b")
+            )
+            arr_tuple = (
+                arr_time_str,
+                arr_dt.strftime("%a,"),
+                str(arr_dt.day),
+                arr_dt.strftime("%b")
+            )
+            
+            # Extract seat availability from availabilityCache
+            # We filter classes that start with AVL or RAC (same as scraper)
+            availability_cache = train.get("availabilityCache") or {}
+            seat_availability_data = {}
+            
+            for cls, class_data in availability_cache.items():
+                if not class_data:
+                    continue
+                avail_str = class_data.get("availabilityDisplayName") or class_data.get("availability") or ""
+                avail_str = avail_str.strip()
+                
+                # Standardize AVAILABLE-0002 -> AVL 2, etc.
+                cleaned_avail = avail_str
+                if avail_str.startswith("AVAILABLE-"):
+                    try:
+                        num = int(avail_str.split("-")[1])
+                        cleaned_avail = f"AVL {num}"
+                    except Exception:
+                        cleaned_avail = f"AVL {avail_str.split('-')[1]}"
+                elif avail_str.startswith("AVAILABLE"):
+                    cleaned_avail = "AVL"
+                
+                # Only keep AVL and RAC classes
+                if cleaned_avail.startswith("AVL") or cleaned_avail.startswith("RAC"):
+                    seat_availability_data[cls] = cleaned_avail
+            
+            # If no available classes, skip this train
+            if not seat_availability_data:
+                continue
+                
+            # Build structured train item
+            train_item = {
+                "train_number": train_number,
+                "train_name": train_name,
+                "from_station": from_st,
+                "to_station": to_st,
+                "seat_availabilty": seat_availability_data,
+                "departure": dep_tuple,
+                "arrival": arr_tuple,
+                "duration": duration_str
+            }
+            temp_trains_data.append(train_item)
+            
+        if temp_trains_data:
+            return temp_trains_data
+        return None
+        
+    except Exception as e:
+        logging.error(f"Error fetching from API: {e}")
+        return None
+
 #Algorithm to scrap data from internet about travel time,seat availabilty and all
 async def web_scrapping(from_station, to_station, date):
+    extraction_logic = os.getenv("TRAIN_DATA_EXTRACTION_LOGIC", "API").strip().upper()
+    
+    if extraction_logic == "API":
+        logging.info(f"Fetching trains using API for {from_station} -> {to_station} on {date}")
+        return await asyncio.to_thread(fetch_trains_api_sync, from_station, to_station, date)
+
+    logging.info(f"Scraping trains from web for {from_station} -> {to_station} on {date}")
     async with async_playwright() as p:
         temp_trains_data = []
         # Launch the browser
@@ -211,8 +378,10 @@ async def web_scrapping(from_station, to_station, date):
         page = await context.new_page()
 
         try:
-            # Navigate to the ixigo trains page
-            await page.goto(f"https://www.ixigo.com/search/result/train/{from_station}/{to_station}/{date}//1/0/0/0/ALL", timeout=40000)
+            # Navigate to the train page (URL from environment template)
+            url_template = os.getenv("TRAIN_DATA_SCRAPE_URL_TEMPLATE")
+            url = url_template.format(from_station=from_station, to_station=to_station, date=date)
+            await page.goto(url, timeout=40000)
 
             # Wait for the network to be idle
             await page.wait_for_load_state("networkidle")
@@ -279,11 +448,12 @@ async def web_scrapping(from_station, to_station, date):
 
 
             
-            for i in list(seat_availability_data.values()):
-                if "AVL" in i:
-                    return temp_trains_data
-            else:
-                return None
+            if temp_trains_data:
+                # Match the scraper's logic safely: at least one train must have an "AVL" status
+                for train in temp_trains_data:
+                    if any("AVL" in status for status in train["seat_availabilty"].values()):
+                        return temp_trains_data
+            return None
 
         except Exception as e:
             print(f"An error occurred: {e}")

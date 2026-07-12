@@ -8,19 +8,30 @@ import time
 import logging
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 # bg-green-700 → #15803D
 # bg-red-700 → #B91C1C
 # bg-blue-600 → #2563EB
 
 
+import socket
+
+# Dynamic Redis host detection (support both Docker network 'redis' and host local 'localhost')
+redis_host = os.getenv("REDIS_HOST") or "redis"
+try:
+    socket.gethostbyname(redis_host)
+except socket.gaierror:
+    redis_host = "localhost"
+
 app = FastAPI()
-r = redis.Redis(host="redis", port=6379, db=0)
+r = redis.Redis(host=redis_host, port=6379, db=0)
+API_KEY = os.getenv("BACKEND_API_KEY")
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://railsplit.luckylinux.xyz"],  # Or specify frontend's URL
+    allow_origins=["https://railsplit.luckylinux.dev", "http://localhost:5174"],  # Or specify frontend's URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,9 +39,16 @@ app.add_middleware(
 
 coordinates = []
 intermediates = []
+# Determine logs directory (support both containerized /logs and local development)
+log_dir = "/logs"
+if not os.path.exists(log_dir) or not os.access(log_dir, os.W_OK):
+    log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
+
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, "logfile.log")
 
 logging.basicConfig(
-    filename='/logs/logfile.log',  # change name as needed
+    filename=log_file,
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
@@ -60,7 +78,7 @@ async def start_stream(request: Request, x_api_key:str = Header(...)):
 
     logging.info(f"Request from IP : {ip}")
 
-    if x_api_key != "bGludXhhcGk1NjU3":
+    if x_api_key != API_KEY:
         logging.error(f"Invalid API Key, user IP: {ip}")
         raise HTTPException(status_code=401, detail="Invalid API key!")
     
@@ -328,7 +346,7 @@ async def pnr_status(pnr, apikey, request: Request):
     ip = x_forwarded_for.split(',')[0] if x_forwarded_for else request.client.host
 
     logging.info(f"PNR Status Request from IP : {ip}")
-    if apikey != "bGludXhhcGk1NjU3":
+    if apikey != API_KEY:
         logging.error(f"{ip} : Inalid API Key!")
         return HTTPException(status_code=401, detail="Mat kr lala mt krr.. Invalid API Key!")
     

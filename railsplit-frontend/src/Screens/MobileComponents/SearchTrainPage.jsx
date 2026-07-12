@@ -173,7 +173,7 @@ function SearchTrainPage(){
                     className="h-auto w-[70vw] bg-[#28292E] rounded-[1.3rem] my-2 mx-auto focus:outline-none text-2xl flex justify-start px-5 py-3 items-center" spellCheck={false}
                     >
                     <div className="flex flex-row gap-4 items-baseline-last">
-                    <span className="text-white font-bold" contentEditable="false">{fromJunction.code}</span>
+                    <span className="text-white font-bold">{fromJunction.code}</span>
                     <span contentEditable="true" ref={refs.fromStation}
                     onFocus={() => handleFocus("fromStation")} 
                     onInput={handleInput}
@@ -214,7 +214,7 @@ function SearchTrainPage(){
                     className="h-auto w-[70vw] bg-[#28292E] rounded-[1.3rem] my-2 mx-auto focus:outline-none text-2xl flex justify-start px-5 py-3 items-center" spellCheck={false}
                     >
                     <div className="flex flex-row gap-4 items-baseline-last">
-                    <span className="text-white font-bold" contentEditable="false">{toJunction.code}</span>
+                    <span className="text-white font-bold">{toJunction.code}</span>
                     <span contentEditable="true" ref={refs.toStation}
                     onFocus={() => handleFocus("toStation")} 
                     onInput={handleInput}

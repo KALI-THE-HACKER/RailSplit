@@ -1,1 +1,0 @@
-src_response = requests.get(base_url, params=src_params,
