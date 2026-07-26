@@ -1,14 +1,34 @@
 services:
   app:
     build: .
+    container_name: railsplit-backend
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - PYTHONUNBUFFERED=1
     ports:
       - "3108:3108"
-    depends_on:
-      - redis
     volumes:
       - ./logs:/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   redis:
-    image: redis:latest
+    image: redis:alpine
+    container_name: railsplit-redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  redis_data:
