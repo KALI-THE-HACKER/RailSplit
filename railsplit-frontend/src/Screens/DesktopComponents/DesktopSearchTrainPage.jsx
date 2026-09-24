@@ -76,6 +76,29 @@ function DesktopSearchTrainPage() {
         setToInputText(fromInputText);
     };
 
+    const handleDemoSearch = () => {
+        const originDemo = { code: "MAJN", name: "Mangalore Jn" };
+        const destDemo = { code: "NDLS", name: "New Delhi" };
+        setFromJunction(originDemo);
+        setToJunction(destDemo);
+        setFromInputText("Mangalore Jn");
+        setToInputText("New Delhi");
+        setTrainClass("No preference");
+
+        const demoDate = new Date();
+        demoDate.setDate(demoDate.getDate() + 20);
+        setDepartureDate(demoDate);
+
+        const dd = String(demoDate.getDate()).padStart(2, '0');
+        const mm = String(demoDate.getMonth() + 1).padStart(2, '0');
+        const yyyy = demoDate.getFullYear();
+        setFormattedDate(`${dd}${mm}${yyyy}`);
+
+        setActiveInput(null);
+        setSuggestions([]);
+        setClassDropdown(false);
+    };
+
     // Close dropdowns on outside click
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -350,14 +373,25 @@ function DesktopSearchTrainPage() {
                         </div>
                     </div>
 
-                    {/* Search Action Button */}
-                    <div className="mt-8">
+                    {/* Search Action Buttons */}
+                    <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
                         <button
                             type="button"
                             onClick={handleSearch}
-                            className="w-full h-14 bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg rounded-2xl shadow-lg transition duration-150 flex items-center justify-center gap-3 cursor-pointer"
+                            className="flex-1 w-full h-14 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-2xl shadow-lg transition duration-150 flex items-center justify-center gap-3 cursor-pointer"
                         >
+                            <i className="fa-solid fa-magnifying-glass text-base"></i>
                             <span>Search trains</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={handleDemoSearch}
+                            className="w-full sm:w-auto px-6 h-14 bg-[#1b1d25] hover:bg-[#242732] border border-blue-500/30 text-blue-400 font-semibold text-base rounded-2xl transition duration-150 flex items-center justify-center gap-2.5 cursor-pointer whitespace-nowrap shadow-md"
+                            title="Fill demo route: MAJN → NDLS (20 days ahead, No preference)"
+                        >
+                            <i className="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                            <span>Demo Search</span>
                         </button>
                     </div>
                 </div>
