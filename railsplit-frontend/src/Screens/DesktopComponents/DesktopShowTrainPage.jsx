@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function DesktopShowTrainPage() {
@@ -12,6 +12,12 @@ function DesktopShowTrainPage() {
     const [indirectTrains, setIndirectTrains] = useState([]);
     const [allStations, setAllStations] = useState([]);
     const [popupCardData, setPopupCardData] = useState(null);
+    const [isSearching, setIsSearching] = useState(true);
+    const [searchCompleted, setSearchCompleted] = useState(false);
+
+    const directTrainsRef = useRef([]);
+    const indirectTrainsRef = useRef([]);
+    const isEndedRef = useRef(false);
 
     // Extract data from route state
     const { origin, destination, trainClass, date } = receivedData?.Data || {};
@@ -48,6 +54,9 @@ function DesktopShowTrainPage() {
         if (!origin || !destination || !trainClass || !date) return;
 
         let eventSource = null;
+        isEndedRef.current = false;
+        setIsSearching(true);
+        setSearchCompleted(false);
 
         const startStream = async () => {
             try {
@@ -74,14 +83,20 @@ function DesktopShowTrainPage() {
 
                 function processApiResponse(data) {
                     if (Array.isArray(data)) {
-                        setDirectTrains(data[0]?.["Direct-trains"] || []);
+                        const direct = data[0]?.["Direct-trains"] || [];
+                        setDirectTrains(direct);
+                        directTrainsRef.current = direct;
 
                         const indirect = data.filter(item => item && item.hasOwnProperty('intermediate'));
                         indirect.sort((a, b) => ((a.duration || 0) + (a.layover || 15)) - ((b.duration || 0) + (b.layover || 15)));
                         setIndirectTrains(indirect);
+                        indirectTrainsRef.current = indirect;
                     } else if (data["Direct-trains"]) {
-                        setDirectTrains(data["Direct-trains"]);
+                        const direct = data["Direct-trains"] || [];
+                        setDirectTrains(direct);
+                        directTrainsRef.current = direct;
                         setIndirectTrains([]);
+                        indirectTrainsRef.current = [];
                     }
                 }
 
@@ -91,12 +106,68 @@ function DesktopShowTrainPage() {
                         if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
                             const data = JSON.parse(trimmed);
                             if (data.status) {
+                                if (data.status === "stream_ended") {
+                                    isEndedRef.current = true;
+                                    if (eventSource) eventSource.close();
+                                    setIsSearching(false);
+                                    setSearchCompleted(true);
+
+                                    const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                                    if (total === 0) {
+                                        setBackendStatus("Search completed — No available trains found");
+                                        setBackendStatusType("#4B5563");
+                                    }
+                                    return;
+                                }
+
+                                if (data.status.startsWith("Completed")) {
+                                    isEndedRef.current = true;
+                                    setIsSearching(false);
+                                    setSearchCompleted(true);
+
+                                    const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                                    if (total === 0) {
+                                        setBackendStatus("Search completed — No available trains found");
+                                        setBackendStatusType("#4B5563");
+                                    } else {
+                                        setBackendStatus(data.status);
+                                        if (data.type) setBackendStatusType(data.type);
+                                    }
+                                    return;
+                                }
+
+                                if (data.status === "Unfortunately no intermediates found!") {
+                                    setIsSearching(false);
+                                    setSearchCompleted(true);
+                                    const hasDirect = directTrainsRef.current.length > 0;
+                                    if (!hasDirect) {
+                                        setBackendStatus("No available trains found for this route");
+                                        setBackendStatusType("#4B5563");
+                                    } else {
+                                        setBackendStatus("Direct trains found (No intermediate routes available)");
+                                        setBackendStatusType("#15803D");
+                                    }
+                                    return;
+                                }
+
                                 setBackendStatus(data.status);
                                 if (data.type) setBackendStatusType(data.type);
                             } else {
                                 processApiResponse(data);
                             }
                         } else {
+                            if (trimmed === "stream_ended") {
+                                isEndedRef.current = true;
+                                if (eventSource) eventSource.close();
+                                setIsSearching(false);
+                                setSearchCompleted(true);
+                                const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                                if (total === 0) {
+                                    setBackendStatus("Search completed — No available trains found");
+                                    setBackendStatusType("#4B5563");
+                                }
+                                return;
+                            }
                             setBackendStatus(trimmed);
                         }
                     } catch (e) {
@@ -105,14 +176,46 @@ function DesktopShowTrainPage() {
                 };
 
                 eventSource.onerror = () => {
-                    setBackendStatus("Connection lost due to some error!");
-                    setBackendStatusType("#B91C1C");
+                    // Ignore normal connection close if stream has already completed or finished
+                    if (isEndedRef.current) {
+                        if (eventSource) eventSource.close();
+                        return;
+                    }
+
+                    if (eventSource.readyState === EventSource.CLOSED) {
+                        isEndedRef.current = true;
+                        setIsSearching(false);
+                        setSearchCompleted(true);
+                        if (eventSource) eventSource.close();
+
+                        const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                        if (total === 0) {
+                            setBackendStatus("Search completed — No available trains found");
+                            setBackendStatusType("#4B5563");
+                        }
+                        return;
+                    }
+
+                    // Genuine interruption
                     if (eventSource) eventSource.close();
+                    setIsSearching(false);
+                    setSearchCompleted(true);
+
+                    const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                    if (total > 0) {
+                        setBackendStatus("Search ended — displaying available options");
+                        setBackendStatusType("#4B5563");
+                    } else {
+                        setBackendStatus("No trains found or connection ended");
+                        setBackendStatusType("#4B5563");
+                    }
                 };
 
             } catch (error) {
                 console.error("Server connection error:", error);
-                setBackendStatus("Server is unreachable!");
+                setIsSearching(false);
+                setSearchCompleted(true);
+                setBackendStatus("Unable to reach train search server. Please check your connection.");
                 setBackendStatusType("#B91C1C");
             }
         };
@@ -120,6 +223,7 @@ function DesktopShowTrainPage() {
         startStream();
 
         return () => {
+            isEndedRef.current = true;
             if (eventSource) eventSource.close();
         };
     }, [origin, destination, trainClass, date]);
@@ -173,7 +277,28 @@ function DesktopShowTrainPage() {
                         style={{ backgroundColor: backendStatusType }}
                     >
                         <p>{backendStatus}</p>
-                        <p className="text-xs opacity-90 mt-0.5">Indirect trains yet found: {indirectTrains.length}</p>
+                        {isSearching && (
+                            <p className="text-xs opacity-90 mt-0.5">Indirect trains found so far: {indirectTrains.length}</p>
+                        )}
+                    </div>
+                )}
+
+                {/* Overall No Trains Found notice */}
+                {searchCompleted && directTrains.length === 0 && indirectTrains.length === 0 && (
+                    <div className="bg-[#16161a] border border-[#262832] rounded-2xl p-8 text-center flex flex-col items-center gap-3 shadow-lg">
+                        <div className="w-14 h-14 rounded-2xl bg-[#23252e] border border-[#333644] text-gray-400 flex items-center justify-center text-2xl">
+                            <i className="fa-solid fa-train-subway"></i>
+                        </div>
+                        <h3 className="text-xl font-semibold text-white">No Trains Found</h3>
+                        <p className="text-gray-400 text-sm max-w-md">
+                            No direct or indirect trains with confirmed seats were found between <span className="text-white font-medium">{origin?.code}</span> and <span className="text-white font-medium">{destination?.code}</span> on this date.
+                        </p>
+                        <button
+                            onClick={() => navigate('/searchtrains')}
+                            className="mt-2 bg-[#252830] hover:bg-[#2f3340] border border-[#3a3e4c] text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer"
+                        >
+                            Modify Search
+                        </button>
                     </div>
                 )}
 
@@ -242,9 +367,13 @@ function DesktopShowTrainPage() {
                                 )}
                             </div>
                         ))
-                    ) : (
+                    ) : isSearching ? (
                         <div className="flex justify-center py-6">
                             <span className="loader"></span>
+                        </div>
+                    ) : (
+                        <div className="bg-[#16161a] border border-[#23252d] rounded-2xl p-5 text-center text-gray-400 text-sm">
+                            No direct trains found
                         </div>
                     )}
                 </div>
@@ -302,9 +431,13 @@ function DesktopShowTrainPage() {
                                 </div>
                             );
                         })
-                    ) : (
+                    ) : isSearching ? (
                         <div className="flex justify-center py-6">
                             <span className="loader"></span>
+                        </div>
+                    ) : (
+                        <div className="bg-[#16161a] border border-[#23252d] rounded-2xl p-5 text-center text-gray-400 text-sm">
+                            No indirect connecting trains found
                         </div>
                     )}
                 </div>
