@@ -14,10 +14,24 @@ function DesktopShowTrainPage() {
     const [popupCardData, setPopupCardData] = useState(null);
     const [isSearching, setIsSearching] = useState(true);
     const [searchCompleted, setSearchCompleted] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationShowed, setNotificationShowed] = useState(false);
 
     const directTrainsRef = useRef([]);
     const indirectTrainsRef = useRef([]);
     const isEndedRef = useRef(false);
+
+    // Show notification telling user about popup feature
+    useEffect(() => {
+        if (indirectTrains.length !== 0 && !notificationShowed) {
+            setShowNotification(true);
+            const notificationTimeout = setTimeout(() => {
+                setShowNotification(false);
+            }, 6000);
+            setNotificationShowed(true);
+            return () => clearTimeout(notificationTimeout);
+        }
+    }, [indirectTrains, notificationShowed]);
 
     // Extract data from route state
     const { origin, destination, trainClass, date } = receivedData?.Data || {};
@@ -380,7 +394,14 @@ function DesktopShowTrainPage() {
 
                 {/* In-direct Trains Section */}
                 <div className="flex flex-col gap-4 mt-2">
-                    <p className="text-white text-center font-medium text-sm">-: In-direct trains :-</p>
+                    <div className="text-center">
+                        <p className="text-white font-medium text-sm">-: In-direct trains :-</p>
+                        {indirectTrains.length > 0 && (
+                            <p className="text-gray-400 text-xs mt-1">
+                                Click on any card below to see full route details & layover
+                            </p>
+                        )}
+                    </div>
 
                     {indirectTrains.length > 0 ? (
                         indirectTrains.map((train, index) => {
@@ -561,6 +582,25 @@ function DesktopShowTrainPage() {
                             </div>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Floating Mobile-view Style Tip Toast */}
+            {showNotification && (
+                <div className="fixed z-40 top-20 right-8 max-w-sm px-4 py-3 backdrop-blur-md bg-blue-500/20 border border-blue-400/30 rounded-2xl shadow-xl flex items-start space-x-3 text-white transition-all">
+                    <i className="fa-solid fa-thumbs-up text-blue-400 mt-1 animate-bounce"></i>
+                    <div className="flex-1">
+                        <strong className="block font-semibold text-sm">Tip!</strong>
+                        <span className="text-gray-200 text-xs leading-[1.2]">
+                            You can click on any indirect train card to see full route details & intermediate stops.
+                        </span>
+                    </div>
+                    <button
+                        onClick={() => setShowNotification(false)}
+                        className="text-gray-400 hover:text-white transition cursor-pointer p-0.5"
+                    >
+                        <i className="fa-solid fa-times text-xs"></i>
+                    </button>
                 </div>
             )}
         </div>
