@@ -18,7 +18,7 @@ function ContactUsPage() {
                 <i onClick={() => navigate('/')} className="fa-solid fa-angle-left text-[#767676] text-2xl ml-1 mt-2" />
                 <div className="absolute left-1/2 -translate-x-1/2 bg-[#1D1F24] h-12 w-[90vw] flex justify-center items-center rounded-4xl mt-2 shadow-lg">
                     <h2 className="text-white text-2xl font-semibold">Contact us</h2>
-                </div>    
+                </div>
             </div>
 
             {/* Animated Background Blobs */}
@@ -36,9 +36,9 @@ function ContactUsPage() {
                     We're here for you!
                 </p>
                 <div className="w-full flex flex-col gap-4">
-                    <div onClick={() => window.location.href = 'mailto:support@luckylinux.xyz'} className="flex items-center gap-3 bg-[#23252b] rounded-xl px-4 py-3 cursor-pointer hover:bg-[#23252b]/80 transition">
+                    <div onClick={() => window.location.href = 'mailto:admin@luckylinux.dev'} className="flex items-center gap-3 bg-[#23252b] rounded-xl px-4 py-3 cursor-pointer hover:bg-[#23252b]/80 transition">
                         <i className="fa-solid fa-envelope text-blue-400 text-xl"></i>
-                        <span className="text-white text-lg break-all">support@luckylinux.xyz</span>
+                        <span className="text-white text-lg break-all">admin@luckylinux.dev</span>
                     </div>
                 </div>
                 <div className="mt-8 w-full">
