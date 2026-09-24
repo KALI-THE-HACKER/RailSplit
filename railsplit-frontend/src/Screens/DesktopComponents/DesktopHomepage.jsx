@@ -1,20 +1,8 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase";
 
 function DesktopHomepage({ username }) {
     const navigate = useNavigate();
-
-    const handleLogout = async () => {
-        try {
-            await auth.signOut();
-            localStorage.removeItem("username");
-            localStorage.removeItem("email");
-            navigate('/');
-        } catch (err) {
-            alert("Logout failed: " + err.message);
-        }
-    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -24,18 +12,10 @@ function DesktopHomepage({ username }) {
         <div className="min-h-[calc(100vh-4rem)] w-full bg-black text-white py-12 px-8">
             <div className="max-w-5xl mx-auto flex flex-col gap-8">
                 {/* Header Welcome Banner */}
-                <div className="flex items-center justify-between pb-4 border-b border-[#1f2129]">
+                <div className="pb-4 border-b border-[#1f2129]">
                     <h1 className="text-3xl font-semibold">
                         Hello {username || "Traveller"} 👋
                     </h1>
-
-                    <button
-                        onClick={handleLogout}
-                        className="bg-[#23252b] hover:bg-[#2d3038] text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition border border-[#333] flex items-center gap-2 cursor-pointer"
-                    >
-                        <i className="fa-solid fa-right-from-bracket"></i>
-                        <span>Logout</span>
-                    </button>
                 </div>
 
                 {/* Services */}

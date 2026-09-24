@@ -27,12 +27,20 @@ function DesktopLoginScreen() {
                         No confirmed seat? Discover indirect train routes with confirmed availability when direct trains are full.
                     </p>
 
-                    <div className="flex items-center gap-4 pt-2">
+                    <div className="flex flex-wrap items-center gap-4 pt-2">
                         <button
                             onClick={() => navigate('/login')}
                             className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base px-8 py-3.5 rounded-xl transition duration-150 cursor-pointer shadow-md"
                         >
                             Log in to your account
+                        </button>
+
+                        <button
+                            onClick={() => navigate('/login?demo=true')}
+                            className="bg-[#28292E] hover:bg-[#343740] border border-blue-500/30 text-blue-400 font-semibold text-base px-6 py-3.5 rounded-xl transition cursor-pointer flex items-center gap-2"
+                        >
+                            <i className="fa-solid fa-user-check"></i>
+                            <span>Guest Login</span>
                         </button>
 
                         <Link
