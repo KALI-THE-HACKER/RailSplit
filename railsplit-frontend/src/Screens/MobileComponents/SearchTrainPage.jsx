@@ -121,6 +121,33 @@ function SearchTrainPage(){
         setActiveInput(null);
     };
 
+    const handleDemoSearch = () => {
+        const originDemo = { code: "MAJN", name: "Mangalore Jn" };
+        const destDemo = { code: "NDLS", name: "New Delhi" };
+        setFromJunction(originDemo);
+        setToJunction(destDemo);
+        if (refs.fromStation.current) {
+            refs.fromStation.current.innerText = "Mangalore Jn";
+        }
+        if (refs.toStation.current) {
+            refs.toStation.current.innerText = "New Delhi";
+        }
+        setTrainClass("No preference");
+
+        const demoDate = new Date();
+        demoDate.setDate(demoDate.getDate() + 20);
+        setDepartureDate(demoDate);
+
+        const dd = String(demoDate.getDate()).padStart(2, '0');
+        const mm = String(demoDate.getMonth() + 1).padStart(2, '0');
+        const yyyy = demoDate.getFullYear();
+        setFormattedDate(`${dd}${mm}${yyyy}`);
+
+        setActiveInput(null);
+        setSuggestions([]);
+        setClassDropdown(false);
+    };
+
     function searchTrainsButton(){
 
         if(fromJunction.code === '--' || toJunction.code === '--' || !trainClass || !departureDate){
@@ -164,7 +191,7 @@ function SearchTrainPage(){
                 <i onClick={() => navigate('/')} className="fa-solid fa-angle-left text-[#767676] text-2xl" />
                 <div className="absolute left-1/2 -translate-x-1/2 bg-[#1D1F24] h-12 w-[90vw] flex justify-center items-center rounded-4xl"><h2 className="text-white text-2xl font-semibold">Search trains</h2></div>    
             </div>
-            <div className="h-150 w-[90vw] bg-[#1D1F24] my-10 rounded-[2rem] py-5 px-10 text-center">
+            <div className="min-h-150 h-fit w-[90vw] bg-[#1D1F24] my-6 rounded-[2rem] py-5 px-6 text-center shadow-xl">
 
                 {/* Origin Junction section */}
                 <p className="text-neutral-500 text-lg text-left">From</p>
@@ -310,9 +337,17 @@ function SearchTrainPage(){
                         withPortal 
                     />
                     </div>
-
                 </div>
-                <button onClick={searchTrainsButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-10 mb-5 h-13 w-[70vw] rounded-2xl">Search trains</button>
+
+                <button onClick={searchTrainsButton} className="border-0 bg-blue-500 text-white text-xl font-semibold mt-8 mb-3 h-13 w-[70vw] rounded-2xl cursor-pointer">Search trains</button>
+                <button
+                    type="button"
+                    onClick={handleDemoSearch}
+                    className="border border-blue-400/40 bg-black/40 text-blue-400 text-base font-semibold mb-4 h-11 w-[70vw] rounded-xl flex items-center justify-center gap-2 mx-auto cursor-pointer"
+                >
+                    <i className="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                    <span>Demo Search</span>
+                </button>
             </div>
 
         </div>

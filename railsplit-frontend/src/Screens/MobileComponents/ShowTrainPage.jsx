@@ -16,15 +16,19 @@ function ShowTrainPage() {
     const [headerHeight, setHeaderHeight] = useState(0);
 
     const [backendStatus, setBackendStatus] = useState("");
-    const [backendStatusType, setBackendStatusType] = useState('')
+    const [backendStatusType, setBackendStatusType] = useState('');
     const [directTrains, setDirectTrains] = useState([]);
     const [indirectTrains, setIndirectTrains] = useState([]);
     const [allStations, setAllStations] = useState([]);
     const [popupCardData, setPopupCardData] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [notificationShowed, setNotificationShowed] = useState(false);
+    const [isSearching, setIsSearching] = useState(true);
+    const [searchCompleted, setSearchCompleted] = useState(false);
 
-
+    const directTrainsRef = useRef([]);
+    const indirectTrainsRef = useRef([]);
+    const isEndedRef = useRef(false);
 
     // Extract data from react navigate state
     const { origin, destination, trainClass, date } = receivedData?.Data || {};
@@ -46,15 +50,11 @@ function ShowTrainPage() {
             }
         }
 
-        //Fetching station.json to get the full name of intermediate
-        try{
-            fetch('/stations.json')
-                .then((res) => res.json())
-                .then((data) => setAllStations(data));
-        }catch(err){
-            alert(err);
-        }
-
+        // Fetching station.json to get the full name of intermediate
+        fetch('/stations.json')
+            .then((res) => res.json())
+            .then((data) => setAllStations(data))
+            .catch((err) => console.error("Error loading stations:", err));
     }, []);
 
     useEffect(() => {
@@ -69,7 +69,7 @@ function ShowTrainPage() {
         }
     }, [indirectTrains]);
 
-    //Making bg unclickable and unscrollable when the popup is active
+    // Making bg unclickable and unscrollable when the popup is active
     useEffect(() => {
         if (popupCardData) {
             document.body.style.overflow = 'hidden';
@@ -78,13 +78,15 @@ function ShowTrainPage() {
         }
     }, [popupCardData]);
 
-
     // Fetching data from server
     useEffect(() => {
         // Don't start if required data is missing
         if (!origin || !destination || !trainClass || !date) return;
 
         let eventSource = null;
+        isEndedRef.current = false;
+        setIsSearching(true);
+        setSearchCompleted(false);
 
         const startStream = async () => {
             try {
@@ -113,33 +115,75 @@ function ShowTrainPage() {
 
                 function processApiResponse(data) {
                     if (Array.isArray(data)) {
-                        setDirectTrains(data[0]?.["Direct-trains"] || []);
+                        const direct = data[0]?.["Direct-trains"] || [];
+                        setDirectTrains(direct);
+                        directTrainsRef.current = direct;
 
                         // Filter out the direct trains object and get only indirect trains
-                        const indirectTrains = data.filter(item => 
-                        item.hasOwnProperty('intermediate'));
+                        const indirect = data.filter(item => item && item.hasOwnProperty('intermediate'));
+                        indirect.sort((a, b) => ((a.duration || 0) + (a.layover || 15)) - ((b.duration || 0) + (b.layover || 15)));
 
-                        //Sorting mechanism for indirectTrains Array
-                        indirectTrains.sort((a, b) => ((a.duration || 0) + (a.layover || 15)) - ((b.duration || 0) + b.layover || 15));
-
-                        setIndirectTrains(indirectTrains || []);
+                        setIndirectTrains(indirect || []);
+                        indirectTrainsRef.current = indirect || [];
                     } else if (data["Direct-trains"]) {
-                        setDirectTrains(data["Direct-trains"]);
+                        const direct = data["Direct-trains"] || [];
+                        setDirectTrains(direct);
+                        directTrainsRef.current = direct;
                         setIndirectTrains([]);
-                    } else {
-                        // Handle other possible structures or ignore
-                        // Do nothing
+                        indirectTrainsRef.current = [];
                     }
                 }
 
                 eventSource.onmessage = (event) => {
                     try {
-                        // Try to parse only if it looks like JSON (starts with { or [)
                         const trimmed = event.data.trim();
                         if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
                             const data = JSON.parse(trimmed);
-                            //If it's a status message
                             if(data.status){
+                                if (data.status === "stream_ended") {
+                                    isEndedRef.current = true;
+                                    if (eventSource) eventSource.close();
+                                    setIsSearching(false);
+                                    setSearchCompleted(true);
+
+                                    const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                                    if (total === 0) {
+                                        setBackendStatus("Search completed — No available trains found");
+                                        setBackendStatusType("#4B5563");
+                                    }
+                                    return;
+                                }
+
+                                if (data.status.startsWith("Completed")) {
+                                    isEndedRef.current = true;
+                                    setIsSearching(false);
+                                    setSearchCompleted(true);
+
+                                    const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                                    if (total === 0) {
+                                        setBackendStatus("Search completed — No available trains found");
+                                        setBackendStatusType("#4B5563");
+                                    } else {
+                                        setBackendStatus(data.status);
+                                        if (data.type) setBackendStatusType(data.type);
+                                    }
+                                    return;
+                                }
+
+                                if (data.status === "Unfortunately no intermediates found!") {
+                                    setIsSearching(false);
+                                    setSearchCompleted(true);
+                                    const hasDirect = directTrainsRef.current.length > 0;
+                                    if (!hasDirect) {
+                                        setBackendStatus("No available trains found for this route");
+                                        setBackendStatusType("#4B5563");
+                                    } else {
+                                        setBackendStatus("Direct trains found (No intermediate routes available)");
+                                        setBackendStatusType("#15803D");
+                                    }
+                                    return;
+                                }
+
                                 setBackendStatus(data.status);
                                 if(data.type){
                                     setBackendStatusType(data.type);
@@ -148,25 +192,65 @@ function ShowTrainPage() {
                                 processApiResponse(data);
                             }
                         } else {
-                            // Optionally handle non-JSON messages (e.g., status)
+                            if (trimmed === "stream_ended") {
+                                isEndedRef.current = true;
+                                if (eventSource) eventSource.close();
+                                setIsSearching(false);
+                                setSearchCompleted(true);
+                                const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                                if (total === 0) {
+                                    setBackendStatus("Search completed — No available trains found");
+                                    setBackendStatusType("#4B5563");
+                                }
+                                return;
+                            }
                             setBackendStatus(trimmed);
                         }
                     } catch (e) {
-                        // Optionally log the error
-                        alert("Error parsing server message: " + e.message);
-                        setBackendStatus("Error parsing server message");
-                        setBackendStatusType("#B91C1C");
+                        console.error("Error parsing server message:", e);
                     }
                 };
 
-                eventSource.onerror = (err) => {
-                    setBackendStatus(`Connection lost due to some error!`);
-                    setBackendStatusType("#B91C1C");
-                    eventSource.close();
+                eventSource.onerror = () => {
+                    if (isEndedRef.current) {
+                        if (eventSource) eventSource.close();
+                        return;
+                    }
+
+                    if (eventSource.readyState === EventSource.CLOSED) {
+                        isEndedRef.current = true;
+                        setIsSearching(false);
+                        setSearchCompleted(true);
+                        if (eventSource) eventSource.close();
+
+                        const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                        if (total === 0) {
+                            setBackendStatus("Search completed — No available trains found");
+                            setBackendStatusType("#4B5563");
+                        }
+                        return;
+                    }
+
+                    if (eventSource) eventSource.close();
+                    setIsSearching(false);
+                    setSearchCompleted(true);
+
+                    const total = directTrainsRef.current.length + indirectTrainsRef.current.length;
+                    if (total > 0) {
+                        setBackendStatus("Search ended — displaying available options");
+                        setBackendStatusType("#4B5563");
+                    } else {
+                        setBackendStatus("No trains found or connection ended");
+                        setBackendStatusType("#4B5563");
+                    }
                 };
 
             } catch (error) {
-                alert(`${error}.\nServer is unreachable!`);
+                console.error("Server connection error:", error);
+                setIsSearching(false);
+                setSearchCompleted(true);
+                setBackendStatus("Unable to reach train search server.");
+                setBackendStatusType("#B91C1C");
             }
         };
 
@@ -174,6 +258,7 @@ function ShowTrainPage() {
 
         // Cleanup on unmount
         return () => {
+            isEndedRef.current = true;
             if (eventSource) {
                 eventSource.close();
             }
@@ -181,6 +266,13 @@ function ShowTrainPage() {
         // eslint-disable-next-line
     }, [origin, destination, trainClass, date]);
     
+    const getStationName = (code) => {
+        if (!code) return "";
+        const found = allStations.find(st => st.Code?.toUpperCase() === code?.toUpperCase());
+        if (!found) return code;
+        return found.Name.charAt(0).toUpperCase() + found.Name.slice(1).toLowerCase();
+    };
+
     const timeFormatter = (timeInMinutes) => {
         if(Math.floor(timeInMinutes/60)>=1){
             return `${Math.floor(timeInMinutes/60)}hr ${timeInMinutes%60}min`
@@ -213,10 +305,29 @@ function ShowTrainPage() {
                 {/* Snackbar for backendStatus */}
                 <div className="fixed w-[90vw] blue mx-[5vw] px-3 h-fit text-white text-center rounded-lg z-20" style={{ marginTop: `${headerHeight + 10}px`, backgroundColor: `${backendStatusType}` }}>
                     <p>{backendStatus}</p>
-                    <p>Indirect trains yet found: {indirectTrains.length}</p>
+                    {isSearching && (
+                        <p>Indirect trains yet found: {indirectTrains.length}</p>
+                    )}
                 </div>
 
                 <div className="relative flex-1 bg-black h-full w-full overflow-y-auto flex flex-col items-center gap-3 px-4 bottom-5" style={{ marginTop: `${headerHeight +80}px` }}>
+                    {/* Overall No Trains Found banner */}
+                    {searchCompleted && directTrains.length === 0 && indirectTrains.length === 0 && (
+                        <div className="bg-[#1c1c1e] border border-[#2a2c34] rounded-2xl p-6 text-center flex flex-col items-center gap-3 w-full my-2">
+                            <i className="fa-solid fa-train text-gray-500 text-2xl"></i>
+                            <h3 className="text-lg font-semibold text-white">No Trains Found</h3>
+                            <p className="text-gray-400 text-xs">
+                                No direct or indirect trains with confirmed seats were found between {origin?.code} and {destination?.code} on {date}.
+                            </p>
+                            <button
+                                onClick={() => navigate('/searchtrains')}
+                                className="bg-[#292B31] text-white px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer"
+                            >
+                                Modify Search
+                            </button>
+                        </div>
+                    )}
+
                     <p className="text-gray-300 bg-black text-center">-:  Direct trains :-</p>
 
                     {directTrains.length !== 0 ?
@@ -269,7 +380,13 @@ function ShowTrainPage() {
                         </div>
                     )))
 
-                    : <span className="loader" />}
+                    : isSearching ? (
+                        <span className="loader" />
+                    ) : (
+                        <div className="bg-[#1c1c1e] w-full text-center py-4 rounded-xl text-gray-400 text-sm">
+                            No direct trains found
+                        </div>
+                    )}
 
                     <p className="text-white bg-black text-center">-:  In-direct trains  :-</p>
                     {indirectTrains.length !== 0 ? 
@@ -286,7 +403,7 @@ function ShowTrainPage() {
                                 </div>
 
                                 <div className="flex flex-1 flex-col items-center justify-start gap-2">
-                                    <div className="text-blue-300/60 text-[16px]">via {(allStations.find(st => st.Code === train.intermediate)).Name.charAt(0).toUpperCase() + (allStations.find(st => st.Code === train.intermediate)).Name.slice(1).toLowerCase()}</div>
+                                    <div className="text-blue-300/60 text-[16px]">via {getStationName(train.intermediate)}</div>
                                     <div>
                                         
                                     </div>
@@ -318,9 +435,15 @@ function ShowTrainPage() {
                         </div>
                     )))
 
-                    : <div className="flex items-center justify-center w-full py-8">
-                        <span className="loader"></span>
-                    </div>}
+                    : isSearching ? (
+                        <div className="flex items-center justify-center w-full py-8">
+                            <span className="loader"></span>
+                        </div>
+                    ) : (
+                        <div className="bg-[#1c1c1e] w-full text-center py-4 rounded-xl text-gray-400 text-sm">
+                            No indirect connecting trains found
+                        </div>
+                    )}
                 </div>
 
                 {/*Popup card*/}
